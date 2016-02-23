@@ -780,7 +780,43 @@ def plot_1D_hist(x, filename='hist.pdf'):
     with PdfPages(filename) as pdf:
          pdf.savefig()
     plt.close()   
-    print "histogram saved in %s" % filename    
+    print "histogram saved in %s" % filename   
+
+
+
+def plot_1D_hist_noX(x, filename='hist.pdf'):
+    import matplotlib as mpl
+    mpl.use('pdf')
+    import matplotlib.pyplot as plt
+
+    # from scipy.optimize import curve_fit
+    # from scipy import stats, integrate
+
+    #the histogram of the data
+    nx, binsx, patchesx = plt.hist(x, 60, normed=len(x), facecolor='green', alpha=0.75, label='$\psi$')
+
+    #(mu_x, sigma_x) = stats.norm.fit(x)
+
+    #fitx = mlab.normpdf( binsx, mu_x, sigma_x)
+    #lx = plt.plot(binsx, fitx, 'g-', linewidth=1, alpha=0.85)
+
+
+    #n, bins, patches = plt.hist(z, 30, normed=1, facecolor='blue', alpha=0.5, label='$\\theta_2$')
+    plt.xlabel(r'$\mathrm{angle}\ ^\circ$')
+    plt.ylabel(r'$\mathrm {probability}$')
+    plt.title(r'$N=%d,\ \psi_{{\mathrm{avg}}}=%.2f$' % (len(x), sum(x)/len(x)))
+    #plt.title(r'$\mu_{\psi}=%.2f,\ \sigma_{\phi}=%.2f\  \mu_{\theta_1}=%.2f,\ \sigma_{\theta_1}=%.2f\  \mu_{\theta_2}=%.2f,\ \sigma_{\theta_2}=%.2f$' %(mu_x, sigma_x, mu_y, sigma_y, mu_z, sigma_z))
+    plt.legend(loc='upper right')
+    #plt.xlim([-15,15])
+    #plt.grid(True)
+    #plt.show() 
+    # with PdfPages(filename) as pdf:
+    #      pdf.savefig()
+    # plt.close()   
+    # print "histogram saved in %s" % filename  
+    fig = plt.figure()
+    fig.savefig(filename)
+     
 
 def plot_scatter_hist(x,y):
     #import matplotlib.mlab as mlab
