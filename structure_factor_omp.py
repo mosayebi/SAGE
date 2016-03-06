@@ -130,7 +130,7 @@ out = '#q s(q)'
 for key in sorted(sum_sq, key=float) :
     if (N_sq[key] > 0): out += '%s %s' % (key, abs(sum_sq[key])/N_sq[key]/N_mol) 
 
-f.open(sq_file, 'w')f`
+f.open(sq_file, 'w')
 f.write(out)
 f.close()
 print("\n s(q) is written to %s") % sq_file
