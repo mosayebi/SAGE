@@ -413,6 +413,15 @@ def get_points(coords1, coords2):
     return x1,x2,x3,x4
 
 
+def get_helix_COM_atom_id(mol_id):
+  atom_id = []
+  atom1 = int(mol_id/2)*16
+  if (mol_id%2 == 0):
+      atom_id = atom1+1 
+  else:
+      atom_id = atom1+11
+  return atom_id   
+
 
 
 
@@ -597,6 +606,8 @@ def orientational_order(hub_hub_pairs, snap):
 
 
 
+
+
 def traj2psi3(traj_data, filename='psi3_file', skip_snap=True, tcl_write_flag=True, psi3_angle_hist_flag=True):
     last_timestep = 0  
     # get the last snapshot already written to filename
@@ -625,10 +636,9 @@ def traj2psi3(traj_data, filename='psi3_file', skip_snap=True, tcl_write_flag=Tr
                 skip_snap=False 
                 print '\n#Warning: last line of %s is not as expected. Setting skip_snap to False.\n\n'% filename
 
-    
-
     psi3_traj=[]
     psi3_snap={}
+    all_angles=[]
     out = "#"+time.strftime("%c")+"\n" 
     out+= '#step psi3 N_angles count(arms>=2)\n'
     f.write(out)
@@ -646,6 +656,7 @@ def traj2psi3(traj_data, filename='psi3_file', skip_snap=True, tcl_write_flag=Tr
         nb_no, nb_list = build_nb_list(snap)
         hub_hub_pairs = build_hub_hub_pairs(nb_list, nb_no)
         psi3, N_angles, my_count, psi3_vec, angles = orientational_order(hub_hub_pairs, snap)
+        all_angles += angles
         out='%s %s %s %s\n' % (step, psi3, N_angles, my_count)
         print '%s %s %s %s' % (step, psi3, N_angles, my_count)
         # for i, val in enumerate(psi3_vec):
@@ -661,12 +672,27 @@ def traj2psi3(traj_data, filename='psi3_file', skip_snap=True, tcl_write_flag=Tr
         if (psi3_angle_hist_flag):
             make_sure_path_exists('psi3_angle_hist')
             pdf_file = 'psi3_angle_hist/'+traj_file+'.hist.'+str(snap['step'])+".pdf"
-            plot_1D_hist (angles, pdf_file) 
+            if len(angles)>1:
+               angle_file = 'psi3_angle_hist/'+traj_file+'.angles'
+               plot_1D_hist (angles, pdf_file) 
+               g = open (angle_file, 'a+')
+               for j, val in enumerate(angles):
+                 g.write("%s %s\n"%(str(snap['step']), val)) 
+               g.flush()
+               g.close()  
 
 
         psi3_snap['psi3']=psi3_vec
         psi3_traj.append(psi3_snap.copy())
         f.write (out)
+        f.flush ()
+
+
+
+    if (psi3_angle_hist_flag and len(all_angles)>1):
+        make_sure_path_exists('psi3_angle_hist')
+        pdf_file = 'psi3_angle_hist/'+traj_file+'.total_hist.'+str(traj_data[0]['step'])+'_'+str(traj_data[-1]['step'])+".pdf"
+        plot_1D_hist (all_angles, pdf_file)        
     print '#psi3 output is appended to %s' % filename     
     return psi3_traj
 
@@ -753,6 +779,8 @@ def plot_hist(x,y,z, filename='hist.pdf'):
 
 
 def plot_1D_hist(x, filename='hist.pdf'):
+    import matplotlib as mpl
+    mpl.use('Agg')  
     #import matplotlib.mlab as mlab
     import matplotlib.pyplot as plt
     from matplotlib.backends.backend_pdf import PdfPages
@@ -760,7 +788,7 @@ def plot_1D_hist(x, filename='hist.pdf'):
     # from scipy import stats, integrate
 
     #the histogram of the data
-    nx, binsx, patchesx = plt.hist(x, 50, normed=len(x), facecolor='green', alpha=0.75, label='$\psi$')
+    nx, binsx, patchesx = plt.hist(x, 60, normed=len(x), facecolor='green', alpha=0.75, label='$\psi$')
 
     #(mu_x, sigma_x) = stats.norm.fit(x)
 
@@ -780,21 +808,26 @@ def plot_1D_hist(x, filename='hist.pdf'):
     with PdfPages(filename) as pdf:
          pdf.savefig()
     plt.close()   
-    print "histogram saved in %s" % filename   
+    print "histogram saved in %s" % filename    
 
 
-def plot_1D_hist_noX(x, filename='hist.pdf'):
+def plot_1D_hist_noX(x, filename='hist.png'):
     import matplotlib as mpl
-    mpl.use('pdf')
+    mpl.use('Agg')
     import matplotlib.pyplot as plt
 
     # from scipy.optimize import curve_fit
     # from scipy import stats, integrate
+
     #the histogram of the data
     nx, binsx, patchesx = plt.hist(x, 60, normed=len(x), facecolor='green', alpha=0.75, label='$\psi$')
+
     #(mu_x, sigma_x) = stats.norm.fit(x)
+
     #fitx = mlab.normpdf( binsx, mu_x, sigma_x)
     #lx = plt.plot(binsx, fitx, 'g-', linewidth=1, alpha=0.85)
+
+
     #n, bins, patches = plt.hist(z, 30, normed=1, facecolor='blue', alpha=0.5, label='$\\theta_2$')
     plt.xlabel(r'$\mathrm{angle}\ ^\circ$')
     plt.ylabel(r'$\mathrm {probability}$')
@@ -810,6 +843,7 @@ def plot_1D_hist_noX(x, filename='hist.pdf'):
     # print "histogram saved in %s" % filename  
     fig = plt.figure()
     fig.savefig(filename)
+
 
 
 def plot_scatter_hist(x,y):
@@ -1035,197 +1069,6 @@ def analyse_log(plotfile, logfile='log_0.75'):
     plt.close()
     print 'cluster info plotted in %s' % plotfile+'_Epair.pdf' 
 
-
-
-
-if len(sys.argv) == 2 :
-   traj_file = sys.argv[1]
-   max_timestep = 1e10
-   min_timestep = 0
-elif len(sys.argv) == 4 :
-   traj_file = sys.argv[1]
-   min_timestep = float(sys.argv[2])
-   max_timestep = float(sys.argv[3])
-else:
-    print 'Usage: %s dump_file [min_timestep max_timestep]' % (sys.argv[0])
-    sys.exit(1)
-
-
-# logfile ='log_rerun_0.75'
-# plotfile=logfile
-# analyse_cluster_log(plotfile, logfile)
-
-
-# logfile ='log_0.75'
-# plotfile=logfile
-# analyse_log(plotfile, logfile)
-
-# sys.exit()
-
-
-# atom_phi, atom_theta1, atom_theta2 = read_atomistic_angles('/Users/mm15804/scratch/SAGE/old/atomistic_trajectory/hub-hub_angles.his')
-# plot_hist(atom_phi, atom_theta1, atom_theta2, filename='atomistic_angles.pdf')
-#sys.exit()
-
-traj_data = read_dump(traj_file, min_timestep, max_timestep)
-psi3_file = traj_file+'.psi3'
-psi3_traj = traj2psi3(traj_data, filename=psi3_file, skip_snap=False)
-#psi3_traj=[]
-
-
-
-#snap = traj_data[-1]
-# plot_file=traj_file
-# traj2angles_plot(traj_data, plot_file)
-
-# nb_no, nb_list = build_nb_list(snap)
-# # print
-# # print 'mol_id nb_no'
-# # for i in range(len(nb_no)):
-# #     print i, nb_no[i]
-
-# # print 
-# # print 'mol_id nb_list(mol_id)'
-# # for i in range(len(nb_list)):  
-# #     print i, nb_list[i][0:nb_no[i]]
-
-
-# #print
-# hub_hub_pairs = build_hub_hub_pairs(nb_list, nb_no)
-# #print hub_hub_pairs 
-# #print
-# #print len(hub_hub_pairs)
-# psi3, N_angles = orientational_order(hub_hub_pairs, snap)
-
-
-
-for i in  range(len(traj_data)):
-    if len(psi3_traj)>0: 
-    	psi3 = psi3_traj[i]
-    	snap = traj_data[i]
-        print i, snap['step']
-        tcl_file = traj_file+'.psi3.'+str(snap['step'])+".tcl"
-        tcl_out = conf2tcl (snap, cluster_flag=False, box_flag=True, psi3_flag = True, psi3 = psi3['psi3']) 
-        write_tcl_out (tcl_out, filename=tcl_file)
-    # tcl_file = traj_file+'.cluster.'+str(snap['step'])+".tcl"
-    # tcl_out = conf2tcl (snap, cluster_flag=True)
-    # write_tcl_out (tcl_out, filename=tcl_file)
-    tcl_file = traj_file+str(snap['step'])+".tcl"
-    png_file = traj_file+str(snap['step'])+".png"
-    tcl_out = conf2tcl (snap, cluster_flag=False, box_flag=False)
-    write_tcl_out (tcl_out, filename=tcl_file)
-    render_tcl_file (4000, 4000, png_file=png_file, tcl_out_file=tcl_file)
-
-#movie_file=traj_file
-#traj2movie(traj_data, movie_file, cluster_flag=True, rotation_flag=True)
-
-
-
-
-#launchargs = 'vmd -e out.tcl'
-#print "%s", launchargs
-#myinput = subprocess.Popen(launchargs, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-#mystdout,mystderr = myinput.communicate()
-
-
-
-sys.exit()
-
-#print d
-for s, snap in enumerate(d): 
-    x = snap['coords']
-    p_type = snap['p_type']
-    box = snap['box']
-    step = snap['step']
-
-nb  = [0]*N_mol
-for mol1_id in range(N_mol):
-    for mol2_id in range(N_mol):
-        if (mol1_id >= mol2_id): continue
-        print mol1_id, mol2_id
-
-        if if_bonded( mol1_id, mol2_id,x, 0.5, box ):
-             #print mol1_id, mol2_id
-             nb[mol1_id] += 1
-             nb[mol2_id] += 1 
-#print
-#print nb
-#
-#print
-
-my_count_dimer = {}
-my_count_trimer = {}
-for i,val in enumerate(nb):
-  if (i%2 == 1):
-    my_count_dimer[val] = (my_count_dimer.get(val, 0)) + 1
-  else:
-    my_count_trimer[val] = (my_count_trimer.get(val, 0)) + 1
-print 
-print '#trimer_cluster_size, frequency (step=%s)' % (step)
-#print '-------------------------------'
-for key in sorted(my_count_trimer, key=int):
-    print key+1,int(float(my_count_trimer[key])/int(key+1))
-print 
-print '#dimer_cluster_size, frequency(step=%s)' % (step)
-#print '-------------------------------'
-for key in sorted(my_count_dimer, key=int):
-    print key+1, int(float(my_count_dimer[key])/int(key+1))
-
-print
-print
-
-sys.exit()
-
-
-nb = read_topology(top, d[0]['N'])
-
-# print d[0]['step']
-#print nb
-
-print 'analysing...'
-
-op = []
-time = []
-phi=[]
-theta1=[]
-theta2=[]
-for s, snap in enumerate(d):
- 
-    x = snap['coords']
-    p_type = snap['p_type']
-    box = snap['box']
-    step = snap['step']
-    
-    # first hub, atoms {1..8}
-    cnt = 0
-    cnt_bonds = 0
-    for line in nb:
-        hub1_id = line[0];
-        #print line
-        #print hub1_id, line[1:]
-        for hub2_id in line[1:]:
-             if hub1_id > hub2_id: continue
-             cnt += 1
-             if not if_bonded( hub1_id, hub2_id, 0.75, box ):
-                #print '*',step, hub1_id, hub2_id
-                continue
-             cnt_bonds += 1   
-             x1,x2,x3,x4 = get_points(hub1_id, hub2_id, x, p_type, box) 
-             dihedral, bend1, bend2 = get_angles(x1,x2,x3,x4,box)
-             phi.append(dihedral)
-             theta1.append(bend1)
-             theta2.append(bend2)
-
-             #print bend1, bend2
-
-    #print step, cnt_bonds, cnt
-    op.append(cnt_bonds/(cnt+0.0))
-    time.append(step)
-
-plot_hist(phi,theta1, theta2) 
-plot_scatter_hist(phi, theta1)
-plot_scatter_hist_sns(phi, theta1)
-plot_op_vs_time (time, op)
 
 
 
