@@ -28,7 +28,7 @@ def get_structure_factor_q(snap, qmod):
     step = snap['step']
     N_mol = snap['N']/16 * 2
     #print("Process %s going to get s(q) for q=%s and snapshot=%s" % (current_process().pid, qmod, step))
-    Ndir = 40
+    Ndir = 100
     sum_sq = 0. + 0.j
     for idir in range(Ndir):
         q = -1j * np.array(random_unit_vector()) * qmod
@@ -48,15 +48,25 @@ def get_structure_factor_q(snap, qmod):
 
 
 
+if len(sys.argv) == 2 :
+   traj_file = sys.argv[1]
+   max_timestep = 1e10
+   min_timestep = 0
+elif len(sys.argv) == 4 :
+   traj_file = sys.argv[1]
+   min_timestep = float(sys.argv[2])
+   max_timestep = float(sys.argv[3])
+else:
+    print 'Usage: %s dump_file [min_timestep max_timestep]' % (sys.argv[0])
+    sys.exit(1)
 
-
-min_timestep = 0
-max_timestep = 1e10
-traj_file = '/Users/mm15804/scratch/SAGE/psi3_test/dump_0.05.lammpstrj'
+# min_timestep = 0
+# max_timestep = 1e10
+# traj_file = '/Users/mm15804/scratch/SAGE/psi3_test/dump_0.05.lammpstrj'
 traj_data = hub.read_dump(traj_file, min_timestep, max_timestep)
+sq_file = traj_file+'.sq'
 
-
-
+ 
 print("\nNumber of cores available equals %d" % cpu_count())
 
        
@@ -65,9 +75,13 @@ print("\nNumber of cores available equals %d" % cpu_count())
 
 if __name__ == "__main__":
 
+
+
+
+
     qmin = 0.01
     qmax = 1.0
-    Nq   = 10
+    Nq   = 100
     dq   = (qmax-qmin)/(Nq-1) 
 
     futures=[]
@@ -111,6 +125,13 @@ if __name__ == "__main__":
             except Exception as e:
                     print("Error = %s : %s" % (type(e), e))
 
-   
+N_mol = snap['N']/16 * 2
+out = '#q s(q)'   
 for key in sorted(sum_sq, key=float) :
-    if (N_sq[key] > 0): print (key, abs(sum_sq[key]/N_sq[key]))
+    if (N_sq[key] > 0): out += '%s %s' % (key, abs(sum_sq[key])/N_sq[key]/N_mol) 
+
+f.open(sq_file, 'w')f`
+f.write(out)
+f.close()
+print("\n s(q) is written to %s") % sq_file
+
