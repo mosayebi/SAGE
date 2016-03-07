@@ -24,12 +24,13 @@ def random_unit_vector():
 
 
 def get_structure_factor_q(snap, qmod):
+    start = time.time()
     x = snap['coords']
     p_type = snap['p_type']
     box = snap['box']
     step = snap['step']
     N_mol = snap['N']/16 * 2
-    #print("Process %s going to get s(q) for q=%s and snapshot=%s" % (current_process().pid, qmod, step))
+
     Ndir = 16
     sum_sq = 0. + 0.j
     for idir in range(Ndir):
@@ -43,7 +44,10 @@ def get_structure_factor_q(snap, qmod):
             dr = hub.PBC (r2-r1, box)
             sq += np.exp( np.dot(dr,q) )
         sum_sq += sq
-    #print sum_sq/Ndir    
+    #print sum_sq/Ndir
+    end = time.time()
+    t = end - start
+    print("[trajectory timestep %s]: calculating s(q) for q = %s took %s (s). {process %s}" % (step, qmod, t, current_process().pid))
     return sum_sq/Ndir
 
 
