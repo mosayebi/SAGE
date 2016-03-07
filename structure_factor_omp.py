@@ -140,9 +140,9 @@ if __name__ == "__main__":
                     print("Error = %s : %s" % (type(e), e))
 
 N_mol = snap['N']/16 * 2
-out = '#q s(q)'   
+out = '#q s(q)\n'   
 for key in sorted(sum_sq, key=float) :
-    if (N_sq[key] > 0): out += '%s %s' % (key, abs(sum_sq[key])/N_sq[key]/N_mol) 
+    if (N_sq[key] > 0): out += '%s %s\n' % (key, abs(sum_sq[key])/N_sq[key]/N_mol) 
 
 print("%s\n", out)
 f = open(sq_file, 'w')
