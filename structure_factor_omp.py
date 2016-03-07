@@ -50,8 +50,8 @@ def get_structure_factor_q(snap, qmod):
         sum_sq += sq/N_mol
     #print sum_sq/Ndir
     end = time.time()
-    print("[trajectory timestep %s]: calculating s(q) for q = %s took %s (s). {process %s}" \
-        % (step, qmod, end-start, current_process().pid))
+    print("[trajectory timestep %s]: averaging s(q) for q = %s over %d directions for %d molec. took %s (s). {process %s}" \
+        % (step, qmod, Ndir, N_mol, end-start, current_process().pid))
     return sum_sq/Ndir
 
 
@@ -122,7 +122,7 @@ if __name__ == "__main__":
             #print("All %d workers are done..."%len(futures))
             break
         time.sleep(10)
-        print("\n (%d) running(queued) workers =  %d,     done = %d \n" % (cnt, running, len(futures)-running)) 
+        print("(%d) running(queued) workers =  %d,     done = %d" % (cnt, running, len(futures)-running)) 
 
     end = time.time()
     print ("time: %s (s) for %d workers [%f]" %((end-start), len(futures), (end-start)/len(futures)))
