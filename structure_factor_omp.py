@@ -121,8 +121,8 @@ if __name__ == "__main__":
         if all_finished:
             print("All workers are done...")
             break
-        time.sleep(60)
-        print("(%d) running(queued) workers =  %d,     done = %d" % (cnt, running, len(q)-running)) 
+        time.sleep(10)
+        print("\n (%d) running(queued) workers =  %d,     done = %d \n" % (cnt, running, len(q)-running)) 
 
     sum_sq = {}
     N_sq = {}
@@ -140,11 +140,11 @@ if __name__ == "__main__":
                     print("Error = %s : %s" % (type(e), e))
 
 N_mol = snap['N']/16 * 2
-out = '#q s(q)\n'   
+out = "#q s(q)\n"   
 for key in sorted(sum_sq, key=float) :
-    if (N_sq[key] > 0): out += '%s %s\n' % (key, abs(sum_sq[key])/N_sq[key]/N_mol) 
+    if (N_sq[key] > 0): out += "%s %s\n" % (key, abs(sum_sq[key])/N_sq[key]/N_mol) 
 
-print("%s\n", out)
+print("\n%s\n"% out)
 f = open(sq_file, 'w')
 f.write(out)
 f.close()
