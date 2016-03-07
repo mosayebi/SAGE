@@ -86,7 +86,7 @@ if __name__ == "__main__":
     start = time.time()
 
     qmin = 0.01
-    qmax = 1.0
+    qmax = 2.0
     Nq   = 50
     dq   = (qmax-qmin)/(Nq-1) 
 
