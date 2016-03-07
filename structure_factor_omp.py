@@ -3,6 +3,8 @@ import contextlib
 import hub_mp as hub
 import time
 import numpy as np
+import sys
+import os
 
 
 def random_unit_vector():
@@ -28,7 +30,7 @@ def get_structure_factor_q(snap, qmod):
     step = snap['step']
     N_mol = snap['N']/16 * 2
     #print("Process %s going to get s(q) for q=%s and snapshot=%s" % (current_process().pid, qmod, step))
-    Ndir = 100
+    Ndir = 16
     sum_sq = 0. + 0.j
     for idir in range(Ndir):
         q = -1j * np.array(random_unit_vector()) * qmod
@@ -81,11 +83,12 @@ if __name__ == "__main__":
 
     qmin = 0.01
     qmax = 1.0
-    Nq   = 100
+    Nq   = 16
     dq   = (qmax-qmin)/(Nq-1) 
 
     futures=[]
     q = []
+    
     with contextlib.closing( Pool() ) as pool:
         for i in range(len(traj_data)):
             for iq in range(Nq):
@@ -94,21 +97,28 @@ if __name__ == "__main__":
                 futures.append( pool.apply_async( get_structure_factor_q, [snap, qmod] ) )
                 q.append(qmod)
 
-    futures[-1].wait()
+
+
+    #futures[-1].wait()
+    cnt = 0
     while True:
         all_finished = True
-        print("\nHave the workers finished?")
+        running = 0
+        cnt += 1
+        #print("\nHave the workers finished?")
         for i in range(0,len(futures)):
             #if futures[i].ready():
                 #print("Worker %d has finished" % i)
             #else:
             if not futures[i].ready():
                 all_finished = False
-                print("Worker %d is running..." % i)
+                running += 1
+                #print("Worker %d is running..." % i)
         if all_finished:
             print("All workers are done...")
             break
-        time.sleep(2)
+        time.sleep(60)
+        print("(%d) running(queued) workers =  %d,     done = %d" % (cnt, running, len(q)-running)) 
 
     sum_sq = {}
     N_sq = {}
@@ -130,7 +140,8 @@ out = '#q s(q)'
 for key in sorted(sum_sq, key=float) :
     if (N_sq[key] > 0): out += '%s %s' % (key, abs(sum_sq[key])/N_sq[key]/N_mol) 
 
-f.open(sq_file, 'w')
+print("%s\n", out)
+f = open(sq_file, 'w')
 f.write(out)
 f.close()
 print("\n s(q) is written to %s") % sq_file
