@@ -36,7 +36,7 @@ def get_structure_factor_q(snap, qmod):
         xm [i,:] = x [ hub.get_helix_COM_atom_id(i), :]
 
 
-    Ndir = 10
+    Ndir = 16
     sum_sq = 0. + 0.j
     for idir in range(Ndir):
         q = -1j * np.array(random_unit_vector()) * qmod
