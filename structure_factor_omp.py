@@ -31,23 +31,27 @@ def get_structure_factor_q(snap, qmod):
     step = snap['step']
     N_mol = snap['N']/16 * 2
 
-    Ndir = 16
+    xm =  np.zeros((N_mol,3))
+    for i in range(N_mol):
+        xm [i,:] = x [ hub.get_helix_COM_atom_id(i), :]
+
+
+    Ndir = 10
     sum_sq = 0. + 0.j
     for idir in range(Ndir):
         q = -1j * np.array(random_unit_vector()) * qmod
-        sq = 1.0
+        sq = N_mol
         for mol1_id in range(N_mol):
           for mol2_id in range(mol1_id+1, N_mol):
             if (mol1_id == mol2_id): continue 
-            r1 = x [ hub.get_helix_COM_atom_id(mol1_id), :]
-            r2 = x [ hub.get_helix_COM_atom_id(mol2_id), :]
-            dr = hub.PBC (r2-r1, box)
+            dr = xm [ mol2_id, :] - xm [ mol1_id, :]
+            dr = hub.PBC (dr, box)
             sq += np.exp( np.dot(dr,q) )
-        sum_sq += sq
+        sum_sq += sq/N_mol
     #print sum_sq/Ndir
     end = time.time()
-    t = end - start
-    print("[trajectory timestep %s]: calculating s(q) for q = %s took %s (s). {process %s}" % (step, qmod, t, current_process().pid))
+    print("[trajectory timestep %s]: calculating s(q) for q = %s took %s (s). {process %s}" \
+        % (step, qmod, end-start, current_process().pid))
     return sum_sq/Ndir
 
 
@@ -66,24 +70,20 @@ else:
     print 'Usage: %s dump_file [min_timestep max_timestep]' % (sys.argv[0])
     sys.exit(1)
 
+
+
+
 # min_timestep = 0
 # max_timestep = 1e10
 # traj_file = '/Users/mm15804/scratch/SAGE/psi3_test/dump_0.05.lammpstrj'
 traj_data = hub.read_dump(traj_file, min_timestep, max_timestep)
 sq_file = traj_file+'.sq'
 
- 
-print("\nNumber of cores available equals %d" % cpu_count())
 
-       
-
-
+print("\nNumber of cores available equals %d\n" % cpu_count())
 
 if __name__ == "__main__":
-
-
-
-
+    start = time.time()
 
     qmin = 0.01
     qmax = 1.0
@@ -119,10 +119,13 @@ if __name__ == "__main__":
                 running += 1
                 #print("Worker %d is running..." % i)
         if all_finished:
-            print("All workers are done...")
+            #print("All %d workers are done..."%len(futures))
             break
         time.sleep(10)
-        print("\n (%d) running(queued) workers =  %d,     done = %d \n" % (cnt, running, len(q)-running)) 
+        print("\n (%d) running(queued) workers =  %d,     done = %d \n" % (cnt, running, len(futures)-running)) 
+
+    end = time.time()
+    print ("time: %s (s) for %d workers [%f]" %((end-start), len(futures), (end-start)/len(futures)))
 
     sum_sq = {}
     N_sq = {}
