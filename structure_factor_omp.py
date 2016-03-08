@@ -36,7 +36,7 @@ def get_structure_factor_q(snap, qmod):
         xm [i,:] = x [ hub.get_helix_COM_atom_id(i), :]
 
 
-    Ndir = 16
+    Ndir = 20
     sum_sq = 0. + 0.j
     for idir in range(Ndir):
         q = -1j * np.array(random_unit_vector()) * qmod
@@ -86,8 +86,8 @@ if __name__ == "__main__":
     start = time.time()
 
     qmin = 0.01
-    qmax = 2.0
-    Nq   = 60
+    qmax = 3.0
+    Nq   = 80
     dq   = (qmax-qmin)/(Nq-1) 
 
     futures=[]
