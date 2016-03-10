@@ -355,10 +355,11 @@ def conf2pdb_saxs(snap, filename):
     xm =  np.zeros((N_mol,3))
     for i in range(N_mol):
         xm [i,:] = x [ get_helix_COM_atom_id(i), :]
-        res += "ATOM  %5d%4s  %3s %c%4d%c   %8.3f%8.3f%8.3f%6.2f%6.2f\n" % (i, "CA", "ASP", 'A', i % 10000,' ',xm[0]*10,xm[1]*10,xm[2]*10,1,20.0)
+        res += "ATOM  %5d%4s  %3s %c%4d%c   %8.3f%8.3f%8.3f%6.2f%6.2f\n" % (i, "CA", "ASP", 'A', i % 10000,' ',xm[i,0]*10,xm[i,1]*10,xm[i,2]*10,1,20.0)
     f = open(filename, "a")
     f.write(res)
     print 'PDB file is written to %sfor SAXS analysis with CRYSOL'%filename
+    print 'usage: crysol %s -sm 1.0 -ns 1000 -fb 18 -lm 25'%filename
     f.close()
 
         

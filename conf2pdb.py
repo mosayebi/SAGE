@@ -21,6 +21,6 @@ if __name__ == "__main__":
         snap = traj_data[i]
         step = snap ['step']
         PDB_file = traj_file+'.'+str(step)+'.pdb'
-        hub.conf2pdb_saxs(snap, filename)
+        hub.conf2pdb_saxs(snap, PDB_file)
 
 
