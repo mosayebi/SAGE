@@ -362,6 +362,55 @@ def conf2pdb_saxs(snap, filename):
     print 'usage: crysol %s -sm 1.0 -ns 1000 -fb 18 -lm 25'%filename
     f.close()
 
+
+def read_spherical_packings_www(url='http://neilsloane.com/ICOSP/ipack.3.932.txt'):
+    import urllib
+    f = urllib.urlopen(url)
+    cnt = 0
+    x = []
+    lines=f.readlines()
+    N = len(lines)/3
+    x = np.zeros((N, 3))
+    for i, line in enumerate(lines):
+      x[i/3, i%3] = line.strip('\n')
+    snap = {}
+    snap ['coords'] = x
+    snap ['N'] = N
+    return snap
+
+
+def read_sesh_SAGE(filer):
+    with open(filer,'r') as f:
+      x = []
+      while True:
+        line=f.readline().strip('\n').split()
+        if not line: break
+        x.append([float(line[0]), float(line[1]), float(line[2])])
+    snap = {}
+    snap ['coords'] = np.array(x)
+    snap ['N'] = len(x)
+    return snap
+
+
+def sesh2pdb_saxs(sesh_file='sesh_SAGE.txt', pdb_file='sesh_SAGE.pdb'):
+    snap = read_sesh_SAGE(sesh_file)
+    xm = snap['coords']
+    N_hub = snap['N']
+
+    res = ''
+    for i in range(N_hub):      
+        res += "ATOM  %5d%4s  %3s %c%4d%c   %8.3f%8.3f%8.3f%6.2f%6.2f\n" % (i, "CA", "ASP", 'A', i % 10000,' ',xm[i,0],xm[i,1],xm[i,2],1,20.0)
+    f = open(pdb_file, "a")
+    f.write(res)
+    print 'PDB file is written to %sfor SAXS analysis with CRYSOL'%pdb_file
+    print 'usage: crysol %s -sm 1.0 -ns 1000 -fb 18 -lm 25'%pdb_file
+    f.close()     
+
+
+
+
+
+
         
 
 def PBC(d, box):
