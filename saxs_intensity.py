@@ -60,7 +60,7 @@ def get_Aa2(s_vec, spherical_coords, lmax):
 def get_saxs_intensity(s_mag, snap):
     start = time.time()
     lmax = 10
-    Ndir = 10
+    Ndir = 15
     x = snap['coords']
     N_mol = snap['N']/16 * 2
     step = snap['step']
@@ -99,7 +99,7 @@ else:
 # max_timestep = 1e10
 # traj_file = '/Users/mm15804/scratch/SAGE/psi3_test/dump_0.05.lammpstrj'
 traj_data = hub.read_dump(traj_file, min_timestep, max_timestep)
-sq_file = traj_file+'.sq'
+sq_file = traj_file+'.saxs'
 
 
 print("\nNumber of cores available equals %d\n" % cpu_count())
@@ -167,7 +167,7 @@ if __name__ == "__main__":
                     print("Error = %s : %s" % (type(e), e))
 
 N_mol = snap['N']/16 * 2
-out = "#q s(q)\n"   
+out = "#q I(q)\n"   
 for key in sorted(sum_sq, key=float) :
     if (N_sq[key] > 0): out += "%s %s\n" % (key, abs(sum_sq[key])/N_sq[key]/N_mol) 
 
