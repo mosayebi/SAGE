@@ -350,13 +350,28 @@ def conf2pdb_saxs(snap, filename):
     N = snap['N']
     N_mol = snap['N']/16*2
     box = snap['box']
+    cluster = snap['cluster']
 
-    res = ''
+    if len(cluster)>0:
+      count = {}
+      for cid in cluster:
+          count[cid] = (count.get(cid, 0)) + 1 
+      max_key = max(count, key=lambda k: count[k]) 
+
+    print 'largest cluster with index %s has %s atoms'%(max_key, count[max_key])
     xm =  np.zeros((N_mol,3))
     for i in range(N_mol):
-        xm [i,:] = x [ get_helix_COM_atom_id(i), :]
-        res += "ATOM  %5d%4s  %3s %c%4d%c   %8.3f%8.3f%8.3f%6.2f%6.2f\n" % (i, "CA", "ASP", 'A', i % 10000,' ',xm[i,0]*10,xm[i,1]*10,xm[i,2]*10,1,20.0)
-    f = open(filename, "a")
+      xm [i,:] = x [ get_helix_COM_atom_id(i), :]
+    
+    res = ''
+    cnt = 0
+    for i in range(N_mol):
+        if len(cluster)>0:
+           if not cluster[i]==max_key: continue 
+        #xm [i,:] = xm [ i, :] - np.min(xm)
+        res += "ATOM  %5d%4s  %3s %c%4d%c   %8.1f%8.1f%8.1f%6.2f%6.2f\n" % (cnt, "CA", "ASP", 'A', cnt % 10000,' ',xm[cnt,0]*10,xm[cnt,1]*10,xm[cnt,2]*10,1,20.0)
+        cnt += 1
+    f = open(filename, "w")
     f.write(res)
     print 'PDB file is written to %sfor SAXS analysis with CRYSOL'%filename
     print 'usage: crysol %s -sm 1.0 -ns 1000 -fb 18 -lm 25'%filename
@@ -395,12 +410,13 @@ def read_sesh_SAGE(filer):
 def sesh2pdb_saxs(sesh_file='sesh_SAGE.txt', pdb_file='sesh_SAGE.pdb'):
     snap = read_sesh_SAGE(sesh_file)
     xm = snap['coords']
+    print np.min(xm)
     N_hub = snap['N']
 
     res = ''
     for i in range(N_hub):      
         res += "ATOM  %5d%4s  %3s %c%4d%c   %8.3f%8.3f%8.3f%6.2f%6.2f\n" % (i, "CA", "ASP", 'A', i % 10000,' ',xm[i,0],xm[i,1],xm[i,2],1,20.0)
-    f = open(pdb_file, "a")
+    f = open(pdb_file, "w")
     f.write(res)
     print 'PDB file is written to %sfor SAXS analysis with CRYSOL'%pdb_file
     print 'usage: crysol %s -sm 1.0 -ns 1000 -fb 18 -lm 25'%pdb_file
