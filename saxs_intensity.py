@@ -116,7 +116,7 @@ if __name__ == "__main__":
     futures=[]
     q = []
 
-    print get_saxs_intensity(float(0.1), traj_data[-1])
+    #print get_saxs_intensity(float(0.1), traj_data[-1])
     
     with contextlib.closing( Pool() ) as pool:
         for i in range(len(traj_data)):
