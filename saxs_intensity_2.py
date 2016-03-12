@@ -29,9 +29,9 @@ if __name__ == "__main__":
     mesh_flag = True 
     snap = hub.read_sesh_SAGE(traj_file)
     sq_file = traj_file+'.saxs'
-    snap = hub.make_sc_sheet (4, 30)
+    snap = hub.make_sc_sheet (4, 100)
     sq_file ='sc_sheet.saxs'    
-    snap = hub.make_sc_cube (4, 10)
+    snap = hub.make_sc_cube (4, 60)
     sq_file ='sc_cube.saxs'
 
 
