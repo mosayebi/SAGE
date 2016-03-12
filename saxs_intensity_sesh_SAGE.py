@@ -19,7 +19,7 @@ if __name__ == "__main__":
     
     smin = 0.01
     smax = 3.0
-    Ns   = 4
+    Ns   = 500
     ds   = (smax-smin)/(Ns-1) 
 
     futures=[]
