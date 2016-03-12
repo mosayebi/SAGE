@@ -5,6 +5,8 @@ import numpy as np
 import subprocess
 import time
 import errno 
+import scipy
+from   scipy import special
 
 
 def read_atomistic_angles(filer):
@@ -404,6 +406,8 @@ def read_sesh_SAGE(filer):
     snap = {}
     snap ['coords'] = np.array(x)
     snap ['N'] = len(x)
+    snap ['step'] = 'sesh_SAGE'
+    snap ['traj'] =  filer
     return snap
 
 
@@ -1152,6 +1156,211 @@ def analyse_log(plotfile, logfile='log_0.75'):
     plt.close()
     print 'cluster info plotted in %s' % plotfile+'_Epair.pdf' 
 
+
+
+
+
+#************************************************************************************************
+
+
+# calculates saxs intensity based on J Appl Cryst. (1995) 28, 768-773
+
+def random_unit_vector():
+    """
+    Generates a random 3D unit vector (direction) with a uniform spherical distribution
+    Algo from http://stackoverflow.com/questions/5408276/python-uniform-spherical-distribution
+    :return:
+    """
+    phi = np.random.uniform(0,np.pi*2)
+    costheta = np.random.uniform(-1,1)
+
+    theta = np.arccos( costheta )
+    x = np.sin( theta) * np.cos( phi )
+    y = np.sin( theta) * np.sin( phi )
+    z = np.cos( theta )
+    return np.array([x, y, z])
+
+
+def Cartesian2Spherical(xyz):
+    sph = np.zeros(xyz.shape)
+    xy = xyz[:,0]**2 + xyz[:,1]**2
+    sph[:,0] = np.sqrt(xy + xyz[:,2]**2)
+    sph[:,1] = np.arctan2(np.sqrt(xy), xyz[:,2]) # for elevation angle defined from Z-axis down
+    #sph[:,1] = np.arctan2(xyz[:,2], np.sqrt(xy)) # for elevation angle defined from XY-plane up
+    sph[:,2] = np.arctan2(xyz[:,1], xyz[:,0])  # [-pi, pi] ??
+    return sph
+
+def sphere_form_factor(s, R):
+    f = 9 * (  (np.sin(s*R) - s*R*np.cos(s*R)) / (s*R)**3 )**2
+    return f
+
+
+def cylinder_form_factor_integrand (s, R, L, a):
+    f =  2*scipy.special.jn(0, s*R*np.sin(a)) * np.sin(s*L*np.cos(a/2.0))/( s*R*np.sin(a) *  s*L*np.cos(a/2.0)   )
+    f = (f ** 2) * np.sin(a)
+    return f 
+
+def cylinder_form_factor(s, R, L):
+    from scipy import integrate
+    # Na = 10
+    # da = (np.pi/2-1e-8)/ (Na - 1)
+    # a = [1e-8 + i*da for i in range(Na)]
+    # integrand = map(lambda x: cylinder_form_factor_integrand(s, R, L, x), a)
+    f = scipy.integrate.quad(lambda x: cylinder_form_factor_integrand(s, R, L, x), 1e-14 ,  np.pi/2, epsrel = 1e-10 )
+    return f
+
+
+
+def form_factor(s):
+    f =  sphere_form_factor(s, 1.0)
+    return f
+
+def A_lm(s_mag, spherical_coords, l, m):
+    Alm_vector = form_factor(s_mag) * scipy.special.jn(l, s_mag * spherical_coords[:,0]) * \
+                 np.conj ( scipy.special.sph_harm(m, l, spherical_coords[:,2], spherical_coords[:,1]) )
+    Alm = 4.0 * np.pi * (complex(0,1)**l) * np.sum (Alm_vector) 
+    return Alm  
+
+def get_Aa2(s_vec, spherical_coords, lmax):
+    A = 0
+    for l in range(lmax+1):
+        for m in range(-l,l+1):
+            A += A_lm( s_vec[0], spherical_coords, l, m) * scipy.special.sph_harm(m, l, s_vec[2], s_vec[1])
+    return A * np.conj(A)
+
+def get_saxs_intensity(s_mag, snap, my_model_flag=True):
+    start = time.time()
+    lmax = 15
+    Ndir = 100
+
+    x = snap['coords']
+    if my_model_flag:
+        N_mol = snap['N']/16 * 2
+        step = snap['step']    
+        # TODO : take all 3 particles in the helix into account not just the middle one
+        xm =  np.zeros((N_mol,3))
+        for i in range(N_mol):
+            xm [i,:] = x [ get_helix_COM_atom_id(i), :]
+    else: 
+       N_mol = snap['N']
+       step = snap['step']     
+       xm = x
+
+    spherical_coords = Cartesian2Spherical(xm)
+    
+    sum_I = 0.0
+    for i in range(Ndir):
+        print i
+        s = random_unit_vector() * s_mag
+        s_vec = Cartesian2Spherical(np.array([s]))[0]
+        sum_I += get_Aa2(s_vec, spherical_coords, lmax)
+    end = time.time()
+    print("[trajectory timestep %s]: averaging I(s) for s = %s over %d directions for %d molec. took %s (s). {process %s}" \
+        % (step, s_mag, Ndir, N_mol, end-start, current_process().pid))
+    return sum_I/Ndir
+
+
+
+
+
+
+
+
+def creat_mesh(s_mag, spherical_coords, lmax, Ntheta=50, Nphi=100):
+    start = time.time()
+    dtheta = (np.pi - 0)/(Ntheta-1) 
+    dphi = (np.pi + np.pi)/(Nphi-1)
+    N_mol = len(spherical_coords)
+
+    phi_vec = [- np.pi + j*dphi  for j in range(Nphi)]
+    #theta_vec = [ j*dtheta  for j in range(Ntheta)]
+
+    # f_mesh = np.zeros(Ns)
+    # for i in range(Ns):
+    #     s = smin + i*ds
+    #     f_mesh[i] = form_factor(s)
+
+
+    ylm_mesh = np.zeros((lmax+1, 2*lmax+1, Ntheta, Nphi), dtype=complex)
+    for l in range(lmax+1):
+        for m in range (-l, l+1):
+                mi = m + lmax
+                for i in range(Ntheta):
+                        theta = i*dtheta
+                        ylm_mesh[l,mi,i,:] = scipy.special.sph_harm(m, l, phi_vec, theta)
+
+    ylm_conj_coords_mesh = np.zeros((lmax+1, 2*lmax+1, N_mol), dtype=complex)
+    for l in range(lmax+1):
+        for m in range (-l, l+1):
+            mi = m + lmax
+            ylm_conj_coords_mesh[l,mi,:] = np.conj ( scipy.special.sph_harm(m, l, spherical_coords[:,2], spherical_coords[:,1])  )
+
+
+    Jl_mesh =  np.zeros((lmax+1, N_mol ), dtype=complex)  
+    for l in range(lmax+1):
+                #dummy = scipy.special.jn(l, s * spherical_coords[:,0])
+                Jl_mesh [l, : ] = scipy.special.jn(l, s_mag * spherical_coords[:,0])
+
+    end = time.time()
+    print "creating mesh took %s (s)" % (end-start)
+    return (ylm_mesh, ylm_conj_coords_mesh, Jl_mesh)
+
+def A_lm_mesh(s_mag, l, mi, mesh, s_inds, N_mol):
+    (ylm_mesh, ylm_conj_coords_mesh, Jl_mesh) = mesh
+    Alm_vector = form_factor(s_mag) * Jl_mesh[l, list(range(0, N_mol)) ] * \
+                 ylm_conj_coords_mesh[l, mi, list(range(0, N_mol))  ] 
+    Alm = 4.0 * np.pi * (complex(0,1)**l) * np.sum (Alm_vector) 
+    return Alm      
+
+def get_Aa2_mesh(s_mag, mesh, lmax, s_inds, N_mol):
+    (ylm_mesh, ylm_conj_coords_mesh, Jl_mesh) = mesh
+    A = 0
+    # TODO : use map() => elementwise calculation of A
+    for l in range(lmax+1):
+        for m in range(-l,l+1):
+            mi = m + lmax
+            A += A_lm_mesh(s_mag, l, mi, mesh, s_inds, N_mol) * \
+                 ylm_mesh[l, mi, s_inds[1], s_inds[2]]
+    return A * np.conj(A)
+
+
+def get_saxs_intensity_mesh(s_mag, snap, my_model_flag=True):
+    start = time.time()
+    lmax = 15
+    Ndir = 200
+    (Ntheta, Nphi) = (80, 160)   # mesh size
+    dtheta = (np.pi - 0)/(Ntheta-1) 
+    dphi = (np.pi + np.pi)/(Nphi-1)
+
+    x = snap['coords']
+    if my_model_flag:
+        N_mol = snap['N']/16 * 2
+        step = snap['step']    
+        # TODO : take all 3 particles in the helix into account not just the middle one
+        xm =  np.zeros((N_mol,3))
+        for i in range(N_mol):
+            xm [i,:] = x [ get_helix_COM_atom_id(i), :]
+    else: 
+       N_mol = snap['N']
+       step = snap['step']     
+       xm = x
+
+    spherical_coords = Cartesian2Spherical(xm)
+    mesh = creat_mesh(s_mag, spherical_coords, lmax, Ntheta, Nphi)
+    
+    sum_I = 0.0
+    for i in range(Ndir):
+        s = random_unit_vector() * s_mag
+        s_vec = Cartesian2Spherical(np.array([s]))[0]
+        s_inds = [0, s_vec[1]/dtheta,  s_vec[2]/dphi]  # index of theta and phi on the grid. the first element will not be used.
+        sum_I += get_Aa2_mesh(s_mag, mesh, lmax, s_inds, N_mol)
+    end = time.time()
+    print("[trajectory timestep %s]: averaging I(s) for s = %s over %d directions for %d molec. took %s (s). {process %s}" \
+        % (step, s_mag, Ndir, N_mol, end-start, current_process().pid))
+    return sum_I/Ndir
+
+
+#************************************************************************************************
 
 
 

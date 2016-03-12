@@ -7,30 +7,9 @@ import time
 
 if len(sys.argv) == 2 :
    traj_file = sys.argv[1]
-   max_timestep = 1e10
-   min_timestep = 0
-elif len(sys.argv) == 4 :
-   traj_file = sys.argv[1]
-   min_timestep = float(sys.argv[2])
-   max_timestep = float(sys.argv[3])
 else:
-    print 'Usage: %s dump_file [min_timestep max_timestep]' % (sys.argv[0])
+    print 'Usage: %s sesh_SAGE' % (sys.argv[0])
     sys.exit(1)
-
-
-mesh_flag = True 
-
-
-#print hub.cylinder_form_factor(0.5, 0.5, 4.)
-#sys.exit()
-
-
-# min_timestep = 0
-# max_timestep = 1e10
-# traj_file = '/Users/mm15804/scratch/SAGE/psi3_test/dump_0.05.lammpstrj'
-traj_data = hub.read_dump(traj_file, min_timestep, max_timestep)
-traj_data = traj_data[-40:]
-sq_file = traj_file+'.saxs.01'
 
 
 print("\nNumber of cores available equals %d\n" % cpu_count())
@@ -46,17 +25,16 @@ if __name__ == "__main__":
     futures=[]
     q = []
 
-    #print get_saxs_intensity_mesh(float(0.1), traj_data[-1])
-    
+    mesh_flag = True 
+    snap = hub.read_sesh_SAGE(traj_file)
+    sq_file = traj_file+'.saxs'
     with contextlib.closing( Pool() ) as pool:
-        for i in range(len(traj_data)):
             for ii in range(Ns):
                 s_mag = smin + ii*ds
-                snap = traj_data[i]
                 if (mesh_flag):
-                    futures.append( pool.apply_async( hub.get_saxs_intensity_mesh, [s_mag, snap] ) )
+                    futures.append( pool.apply_async( hub.get_saxs_intensity_mesh, [s_mag, snap, False] ) )
                 else:
-                    futures.append( pool.apply_async( hub.get_saxs_intensity, [s_mag, snap] ) )    
+                    futures.append( pool.apply_async( hub.get_saxs_intensity, [s_mag, snap, False] ) )    
                 q.append(s_mag)
 
 
@@ -100,7 +78,7 @@ if __name__ == "__main__":
             except Exception as e:
                     print("Error = %s : %s" % (type(e), e))
 
-N_mol = snap['N']/16 * 2
+N_mol = snap['N']
 out = "#q I(q)\n"   
 for key in sorted(sum_sq, key=float) :
     if (N_sq[key] > 0): out += "%s %s\n" % (key, abs(sum_sq[key])/N_sq[key]/N_mol) 
