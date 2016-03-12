@@ -19,15 +19,17 @@ if __name__ == "__main__":
     
     smin = 0.01
     smax = 3.0
-    Ns   = 1000
+    Ns   = 4
     ds   = (smax-smin)/(Ns-1) 
 
     futures=[]
     q = []
 
+
     mesh_flag = True 
     snap = hub.read_sesh_SAGE(traj_file)
     sq_file = traj_file+'.saxs'
+    #print hub.get_saxs_intensity_mesh(0.5, snap, False)
     with contextlib.closing( Pool() ) as pool:
             for ii in range(Ns):
                 s_mag = smin + ii*ds

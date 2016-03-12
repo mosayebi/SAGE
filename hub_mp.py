@@ -7,6 +7,7 @@ import time
 import errno 
 import scipy
 from   scipy import special
+from   multiprocessing import Pool,  cpu_count, current_process
 
 
 def read_atomistic_angles(filer):
@@ -1263,9 +1264,6 @@ def get_saxs_intensity(s_mag, snap, my_model_flag=True):
 
 
 
-
-
-
 def creat_mesh(s_mag, spherical_coords, lmax, Ntheta=50, Nphi=100):
     start = time.time()
     dtheta = (np.pi - 0)/(Ntheta-1) 
@@ -1328,7 +1326,7 @@ def get_saxs_intensity_mesh(s_mag, snap, my_model_flag=True):
     start = time.time()
     lmax = 15
     Ndir = 200
-    (Ntheta, Nphi) = (80, 160)   # mesh size
+    (Ntheta, Nphi) = (60, 180)   # mesh size
     dtheta = (np.pi - 0)/(Ntheta-1) 
     dphi = (np.pi + np.pi)/(Nphi-1)
 
