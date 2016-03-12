@@ -40,6 +40,23 @@ def sphere_form_factor(s, R):
     f = 9 * (  (np.sin(s*R) - s*R*np.cos(s*R)) / (s*R)**3 )**2
     return f
 
+
+def cylinder_form_factor_integrand (s, R, L, a):
+    f =  2*scipy.special.jn(0, s*R*np.sin(a)) * np.sin(s*L*np.cos(a/2.0))/( s*R*np.sin(a) *  s*L*np.cos(a/2.0)   )
+    f = (f ** 2) * np.sin(a)
+    return f 
+
+def cylinder_form_factor(s, R, L):
+    from scipy import integrate
+    # Na = 10
+    # da = (np.pi/2-1e-8)/ (Na - 1)
+    # a = [1e-8 + i*da for i in range(Na)]
+    # integrand = map(lambda x: cylinder_form_factor_integrand(s, R, L, x), a)
+    f = scipy.integrate.quad(lambda x: cylinder_form_factor_integrand(s, R, L, x), 1e-14 ,  np.pi/2, epsrel = 1e-10 )
+    return f
+
+
+
 def form_factor(s):
     f =  sphere_form_factor(s, 1.0)
     return f
@@ -150,8 +167,8 @@ def get_Aa2_mesh(s_mag, mesh, lmax, s_inds, N_mol):
 def get_saxs_intensity_mesh(s_mag, snap):
     start = time.time()
     lmax = 15
-    Ndir = 100
-    (Ntheta, Nphi) = (50, 100)   # mesh size
+    Ndir = 200
+    (Ntheta, Nphi) = (80, 160)   # mesh size
     dtheta = (np.pi - 0)/(Ntheta-1) 
     dphi = (np.pi + np.pi)/(Nphi-1)
     x = snap['coords']
@@ -201,12 +218,16 @@ else:
 mesh_flag = True 
 
 
+#print cylinder_form_factor(0.5, 0.5, 4.)
+#sys.exit()
+
+
 # min_timestep = 0
 # max_timestep = 1e10
 # traj_file = '/Users/mm15804/scratch/SAGE/psi3_test/dump_0.05.lammpstrj'
 traj_data = hub.read_dump(traj_file, min_timestep, max_timestep)
-traj_data = traj_data[-20:]
-sq_file = traj_file+'.saxs'
+traj_data = traj_data[-40:]
+sq_file = traj_file+'.saxs.01'
 
 
 print("\nNumber of cores available equals %d\n" % cpu_count())
