@@ -396,6 +396,32 @@ def read_spherical_packings_www(url='http://neilsloane.com/ICOSP/ipack.3.932.txt
     snap ['N'] = N
     return snap
 
+def make_sc_sheet (a, L):
+  Nrow = int(L/a)
+  x = []
+  for i in range(-Nrow/2, Nrow/2):
+    for j in range(-Nrow/2 Nrow/2):
+      x.append([i*a, j*a, 0])
+  snap = {}
+  snap ['coords'] = np.array(x)
+  snap ['N'] = len(x)  
+  snap ['step'] = 'sc_sheet on xy plane at z=0 with a=%s'%a
+  return snap
+
+def make_sc_cube (a, L):
+  Nrow = int(L/a)
+  x = []
+  for i in range(-Nrow/2, Nrow/2):
+    for j in range(-Nrow/2 Nrow/2):
+       for k in range(-Nrow/2 Nrow/2):
+          x.append([i*a, j*a, k*a])
+  snap = {}
+  snap ['coords'] = np.array(x)
+  snap ['N'] = len(x)  
+  snap ['step'] = 'sc_cube with a=%s'%a
+  return snap
+
+
 
 def read_sesh_SAGE(filer):
     with open(filer,'r') as f:
