@@ -29,7 +29,7 @@ mesh_flag = True
 # max_timestep = 1e10
 # traj_file = '/Users/mm15804/scratch/SAGE/psi3_test/dump_0.05.lammpstrj'
 traj_data = hub.read_dump(traj_file, min_timestep, max_timestep)
-traj_data = traj_data[-40:]
+traj_data = traj_data[-20:]
 sq_file = traj_file+'.saxs.02'
 
 
@@ -83,7 +83,7 @@ if __name__ == "__main__":
             #print("All %d workers are done..."%len(futures))
             break
         time.sleep(10)
-        print("(%d) running(queued) workers =  %d,     done = %d" % (cnt, running, len(futures)-running)) 
+        print("(%d) running(queued)/done workers =  %d / %d" % (cnt, running, len(futures)-running)) 
 
     end = time.time()
     print ("time: %s (s) for %d workers [%f]" %((end-start), len(futures), (end-start)/len(futures)))
