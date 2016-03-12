@@ -48,7 +48,7 @@ def A_lm(s_mag, spherical_coords, l, m):
     Alm_vector = form_factor(s_mag) * scipy.special.jn(l, s_mag * spherical_coords[:,0]) * \
                  np.conj ( scipy.special.sph_harm(m, l, spherical_coords[:,2], spherical_coords[:,1]) )
     Alm = 4.0 * np.pi * (complex(0,1)**l) * np.sum (Alm_vector) 
-    return Alm
+    return Alm  
 
 def get_Aa2(s_vec, spherical_coords, lmax):
     A = 0
@@ -59,16 +59,21 @@ def get_Aa2(s_vec, spherical_coords, lmax):
 
 def get_saxs_intensity(s_mag, snap):
     start = time.time()
-    lmax = 10
-    Ndir = 15
+    lmax = 15
+    Ndir = 100
     x = snap['coords']
     N_mol = snap['N']/16 * 2
     step = snap['step']
 
-    spherical_coords = Cartesian2Spherical(x)
+    xm =  np.zeros((N_mol,3))
+    for i in range(N_mol):
+        xm [i,:] = x [ hub.get_helix_COM_atom_id(i), :]
+
+    spherical_coords = Cartesian2Spherical(xm)
     
     sum_I = 0.0
     for i in range(Ndir):
+        print i
         s = random_unit_vector() * s_mag
         s_vec = Cartesian2Spherical(np.array([s]))[0]
         sum_I += get_Aa2(s_vec, spherical_coords, lmax)
@@ -76,6 +81,106 @@ def get_saxs_intensity(s_mag, snap):
     print("[trajectory timestep %s]: averaging I(s) for s = %s over %d directions for %d molec. took %s (s). {process %s}" \
         % (step, s_mag, Ndir, N_mol, end-start, current_process().pid))
     return sum_I/Ndir
+
+
+
+
+
+
+
+
+def creat_mesh(s_mag, spherical_coords, lmax, Ntheta=50, Nphi=100):
+    start = time.time()
+    dtheta = (np.pi - 0)/(Ntheta-1) 
+    dphi = (np.pi + np.pi)/(Nphi-1)
+    N_mol = len(spherical_coords)
+
+    phi_vec = [- np.pi + j*dphi  for j in range(Nphi)]
+    #theta_vec = [ j*dtheta  for j in range(Ntheta)]
+
+    # f_mesh = np.zeros(Ns)
+    # for i in range(Ns):
+    #     s = smin + i*ds
+    #     f_mesh[i] = form_factor(s)
+
+
+    ylm_mesh = np.zeros((lmax+1, 2*lmax+1, Ntheta, Nphi), dtype=complex)
+    for l in range(lmax+1):
+        for m in range (-l, l+1):
+                mi = m + lmax
+                for i in range(Ntheta):
+                        theta = i*dtheta
+                        ylm_mesh[l,mi,i,:] = scipy.special.sph_harm(m, l, phi_vec, theta)
+
+    ylm_conj_coords_mesh = np.zeros((lmax+1, 2*lmax+1, N_mol), dtype=complex)
+    for l in range(lmax+1):
+        for m in range (-l, l+1):
+            mi = m + lmax
+            ylm_conj_coords_mesh[l,mi,:] = np.conj ( scipy.special.sph_harm(m, l, spherical_coords[:,2], spherical_coords[:,1])  )
+
+
+    Jl_mesh =  np.zeros((lmax+1, N_mol ), dtype=complex)  
+    for l in range(lmax+1):
+                #dummy = scipy.special.jn(l, s * spherical_coords[:,0])
+                Jl_mesh [l, : ] = scipy.special.jn(l, s_mag * spherical_coords[:,0])
+
+    end = time.time()
+    print "creating mesh took %s (s)" % (end-start)
+    return (ylm_mesh, ylm_conj_coords_mesh, Jl_mesh)
+
+def A_lm_mesh(s_mag, l, mi, mesh, s_inds, N_mol):
+    (ylm_mesh, ylm_conj_coords_mesh, Jl_mesh) = mesh
+    Alm_vector = form_factor(s_mag) * Jl_mesh[l, list(range(0, N_mol)) ] * \
+                 ylm_conj_coords_mesh[l, mi, list(range(0, N_mol))  ] 
+    Alm = 4.0 * np.pi * (complex(0,1)**l) * np.sum (Alm_vector) 
+    return Alm      
+
+def get_Aa2_mesh(s_mag, mesh, lmax, s_inds, N_mol):
+    (ylm_mesh, ylm_conj_coords_mesh, Jl_mesh) = mesh
+    A = 0
+    # TODO : use map() => elementwise calculation of A
+    for l in range(lmax+1):
+        for m in range(-l,l+1):
+            mi = m + lmax
+            A += A_lm_mesh(s_mag, l, mi, mesh, s_inds, N_mol) * \
+                 ylm_mesh[l, mi, s_inds[1], s_inds[2]]
+    return A * np.conj(A)
+
+
+def get_saxs_intensity_mesh(s_mag, snap):
+    start = time.time()
+    lmax = 15
+    Ndir = 100
+    (Ntheta, Nphi) = (50, 100)   # mesh size
+    dtheta = (np.pi - 0)/(Ntheta-1) 
+    dphi = (np.pi + np.pi)/(Nphi-1)
+    x = snap['coords']
+    N_mol = snap['N']/16 * 2
+    step = snap['step']
+
+    # TODO : take all 3 particles in the helix into account not just the middle one
+    xm =  np.zeros((N_mol,3))
+    for i in range(N_mol):
+        xm [i,:] = x [ hub.get_helix_COM_atom_id(i), :]
+
+    spherical_coords = Cartesian2Spherical(xm)
+    mesh = creat_mesh(s_mag, spherical_coords, lmax, Ntheta, Nphi)
+    
+    sum_I = 0.0
+    for i in range(Ndir):
+        s = random_unit_vector() * s_mag
+        s_vec = Cartesian2Spherical(np.array([s]))[0]
+        s_inds = [0, s_vec[1]/dtheta,  s_vec[2]/dphi]  # index of theta and phi on the grid. the first element will not be used.
+        sum_I += get_Aa2_mesh(s_mag, mesh, lmax, s_inds, N_mol)
+    end = time.time()
+    print("[trajectory timestep %s]: averaging I(s) for s = %s over %d directions for %d molec. took %s (s). {process %s}" \
+        % (step, s_mag, Ndir, N_mol, end-start, current_process().pid))
+    return sum_I/Ndir
+
+
+
+
+
 
 
 
@@ -93,13 +198,14 @@ else:
     sys.exit(1)
 
 
+mesh_flag = True 
 
 
 # min_timestep = 0
 # max_timestep = 1e10
 # traj_file = '/Users/mm15804/scratch/SAGE/psi3_test/dump_0.05.lammpstrj'
 traj_data = hub.read_dump(traj_file, min_timestep, max_timestep)
-traj_data = traj_data[-1]
+traj_data = traj_data[-1:]
 sq_file = traj_file+'.saxs'
 
 
@@ -107,23 +213,26 @@ print("\nNumber of cores available equals %d\n" % cpu_count())
 
 if __name__ == "__main__":
     start = time.time()
-
+    
     smin = 0.01
     smax = 3.0
-    Ns   = 80
+    Ns   = 100
     ds   = (smax-smin)/(Ns-1) 
 
     futures=[]
     q = []
 
-    #print get_saxs_intensity(float(0.1), traj_data[-1])
+    #print get_saxs_intensity_mesh(float(0.1), traj_data[-1])
     
-    with contextlib.closing( Pool() ) as pool:
+    with contextlib.closing( Pool(2) ) as pool:
         for i in range(len(traj_data)):
             for ii in range(Ns):
                 s_mag = smin + ii*ds
                 snap = traj_data[i]
-                futures.append( pool.apply_async( get_saxs_intensity, [s_mag, snap] ) )
+                if (mesh_flag):
+                    futures.append( pool.apply_async( get_saxs_intensity_mesh, [s_mag, snap] ) )
+                else:
+                    futures.append( pool.apply_async( get_saxs_intensity, [s_mag, snap] ) )    
                 q.append(s_mag)
 
 
