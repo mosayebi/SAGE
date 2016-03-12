@@ -205,7 +205,7 @@ mesh_flag = True
 # max_timestep = 1e10
 # traj_file = '/Users/mm15804/scratch/SAGE/psi3_test/dump_0.05.lammpstrj'
 traj_data = hub.read_dump(traj_file, min_timestep, max_timestep)
-traj_data = traj_data[-1:]
+traj_data = traj_data[-20:]
 sq_file = traj_file+'.saxs'
 
 
@@ -224,7 +224,7 @@ if __name__ == "__main__":
 
     #print get_saxs_intensity_mesh(float(0.1), traj_data[-1])
     
-    with contextlib.closing( Pool(2) ) as pool:
+    with contextlib.closing( Pool() ) as pool:
         for i in range(len(traj_data)):
             for ii in range(Ns):
                 s_mag = smin + ii*ds
