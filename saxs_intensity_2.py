@@ -3,6 +3,7 @@ import contextlib
 import hub_mp as hub
 import sys
 import time
+import numpy as np
 
 
 if len(sys.argv) == 2 :
@@ -18,8 +19,8 @@ if __name__ == "__main__":
     start = time.time()
     
     smin = 0.01
-    smax = 3.0
-    Ns   = 500
+    smax = 8.0
+    Ns   = 100
     ds   = (smax-smin)/(Ns-1) 
 
     futures=[]
@@ -31,12 +32,16 @@ if __name__ == "__main__":
     sq_file = traj_file+'.saxs'
     snap = hub.make_sc_sheet (4, 100)
     sq_file ='sc_sheet.saxs'    
-    snap = hub.make_sc_cube (4, 60)
+    snap = hub.make_sc_cube (4, 40)
     sq_file ='sc_cube.saxs'
+    snap['coords']=np.array([[1., 0, 0],[2., 0, 0]])
+    snap['N']=1
+    sq_file ='single_sphere.saxs'
 
+    
+    # print hub.get_saxs_intensity_mesh(0.5, snap, False)
+    # sys.exit()
 
-
-    #print hub.get_saxs_intensity_mesh(0.5, snap, False)
     with contextlib.closing( Pool() ) as pool:
             for ii in range(Ns):
                 s_mag = smin + ii*ds

@@ -1235,7 +1235,7 @@ def cylinder_form_factor(s, R, L):
     # da = (np.pi/2-1e-8)/ (Na - 1)
     # a = [1e-8 + i*da for i in range(Na)]
     # integrand = map(lambda x: cylinder_form_factor_integrand(s, R, L, x), a)
-    f = scipy.integrate.quad(lambda x: cylinder_form_factor_integrand(s, R, L, x), 1e-14 ,  np.pi/2, epsrel = 1e-10 )
+    f = scipy.integrate.quad(lambda x: cylinder_form_factor_integrand(s, R, L, x), 1e-10 ,  np.pi/2, epsrel = 1e-10 )
     return f
 
 
@@ -1275,6 +1275,12 @@ def get_saxs_intensity(s_mag, snap, my_model_flag=True):
        step = snap['step']     
        xm = x
 
+    #move COM to origin   
+    COM = [sum(p)/len(p) for p in zip(*xm)]
+    print "     COM moved to origin (was %s)"%COM
+    for i in range(len(xm)):
+        xm[i,:] = xm[i,:] - COM 
+
     spherical_coords = Cartesian2Spherical(xm)
     
     sum_I = 0.0
@@ -1284,7 +1290,7 @@ def get_saxs_intensity(s_mag, snap, my_model_flag=True):
         s_vec = Cartesian2Spherical(np.array([s]))[0]
         sum_I += get_Aa2(s_vec, spherical_coords, lmax)
     end = time.time()
-    print("[trajectory timestep %s]: averaging I(s) for s = %s over %d directions for %d molec. took %s (s). {process %s}" \
+    print("    [trajectory timestep %s]: averaging I(s) for s = %s over %d directions for %d molec. took %s (s). {process %s}" \
         % (step, s_mag, Ndir, N_mol, end-start, current_process().pid))
     return sum_I/Ndir
 
@@ -1328,7 +1334,7 @@ def creat_mesh(s_mag, spherical_coords, lmax, Ntheta=50, Nphi=100):
                 Jl_mesh [l, : ] = scipy.special.jn(l, s_mag * spherical_coords[:,0])
 
     end = time.time()
-    print "creating mesh took %s (s)" % (end-start)
+    print "    creating mesh took %s (s)" % (end-start)
     return (ylm_mesh, ylm_conj_coords_mesh, Jl_mesh)
 
 def A_lm_mesh(s_mag, l, mi, mesh, s_inds, N_mol):
@@ -1360,16 +1366,25 @@ def get_saxs_intensity_mesh(s_mag, snap, my_model_flag=True):
 
     x = snap['coords']
     if my_model_flag:
-        N_mol = snap['N']/16 * 2
+        N_mol = snap['N']/16 * 2 * 3
         step = snap['step']    
         # TODO : take all 3 particles in the helix into account not just the middle one
         xm =  np.zeros((N_mol,3))
-        for i in range(N_mol):
-            xm [i,:] = x [ get_helix_COM_atom_id(i), :]
+        cnt = 0
+        for i in range(N_mol/3):   
+            xm [cnt:cnt+3, :] = x [ get_helix_atom_ids(i), :]
+            cnt += 3
     else: 
        N_mol = snap['N']
        step = snap['step']     
        xm = x
+
+    #move COM to origin   
+    COM = [sum(p)/len(p) for p in zip(*xm)]
+    print "    COM moved to origin (was %s)"%COM
+    for i in range(len(xm)):
+        xm[i,:] = xm[i,:] - COM 
+    
 
     spherical_coords = Cartesian2Spherical(xm)
     mesh = creat_mesh(s_mag, spherical_coords, lmax, Ntheta, Nphi)
@@ -1381,7 +1396,7 @@ def get_saxs_intensity_mesh(s_mag, snap, my_model_flag=True):
         s_inds = [0, s_vec[1]/dtheta,  s_vec[2]/dphi]  # index of theta and phi on the grid. the first element will not be used.
         sum_I += get_Aa2_mesh(s_mag, mesh, lmax, s_inds, N_mol)
     end = time.time()
-    print("[trajectory timestep %s]: averaging I(s) for s = %s over %d directions for %d molec. took %s (s). {process %s}" \
+    print("    [trajectory timestep %s]: averaging I(s) for s = %s over %d directions for %d molec. took %s (s). {process %s}" \
         % (step, s_mag, Ndir, N_mol, end-start, current_process().pid))
     return sum_I/Ndir
 
