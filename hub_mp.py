@@ -1239,7 +1239,7 @@ def cylinder_form_factor(s, R, L):
 
 
 def form_factor(s):
-    f =  sphere_form_factor(s, 2.0)
+    f =  sphere_form_factor(s, 1.0)
     return f
 
 def A_lm(s_mag, spherical_coords, l, m):
