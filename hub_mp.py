@@ -400,7 +400,7 @@ def make_sc_sheet (a, L):
   Nrow = int(L/a)
   x = []
   for i in range(-Nrow/2, Nrow/2):
-    for j in range(-Nrow/2 Nrow/2):
+    for j in range(-Nrow/2, Nrow/2):
       x.append([i*a, j*a, 0])
   snap = {}
   snap ['coords'] = np.array(x)
@@ -412,8 +412,8 @@ def make_sc_cube (a, L):
   Nrow = int(L/a)
   x = []
   for i in range(-Nrow/2, Nrow/2):
-    for j in range(-Nrow/2 Nrow/2):
-       for k in range(-Nrow/2 Nrow/2):
+    for j in range(-Nrow/2, Nrow/2):
+       for k in range(-Nrow/2, Nrow/2):
           x.append([i*a, j*a, k*a])
   snap = {}
   snap ['coords'] = np.array(x)
