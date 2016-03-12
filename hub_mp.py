@@ -406,6 +406,7 @@ def make_sc_sheet (a, L):
   snap ['coords'] = np.array(x)
   snap ['N'] = len(x)  
   snap ['step'] = 'sc_sheet on xy plane at z=0 with a=%s'%a
+  print 'sc_sheet with a=%s and N=%s is generated at z=0' % (a, snap['N'])
   return snap
 
 def make_sc_cube (a, L):
@@ -419,6 +420,7 @@ def make_sc_cube (a, L):
   snap ['coords'] = np.array(x)
   snap ['N'] = len(x)  
   snap ['step'] = 'sc_cube with a=%s'%a
+  print 'sc_cube with a=%s and N=%s is generated' % (a, snap['N'])
   return snap
 
 
