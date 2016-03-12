@@ -42,13 +42,14 @@ if __name__ == "__main__":
     # print hub.get_saxs_intensity_mesh(0.5, snap, False)
     # sys.exit()
 
+
     with contextlib.closing( Pool() ) as pool:
             for ii in range(Ns):
                 s_mag = smin + ii*ds
                 if (mesh_flag):
-                    futures.append( pool.apply_async( hub.get_saxs_intensity_mesh, [s_mag, snap, False] ) )
+                    futures.append( pool.apply_async( hub.get_saxs_intensity_mesh, [s_mag, snap, False,'sphere'] ) )
                 else:
-                    futures.append( pool.apply_async( hub.get_saxs_intensity, [s_mag, snap, False] ) )    
+                    futures.append( pool.apply_async( hub.get_saxs_intensity, [s_mag, snap, False, 'sphere'] ) )    
                 q.append(s_mag)
 
 

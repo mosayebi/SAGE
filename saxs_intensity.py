@@ -39,8 +39,8 @@ if __name__ == "__main__":
     start = time.time()
     
     smin = 0.01
-    smax = 3.0
-    Ns   = 100
+    smax = 7.0
+    Ns   = 200
     ds   = (smax-smin)/(Ns-1) 
 
     futures=[]
@@ -54,9 +54,12 @@ if __name__ == "__main__":
                 s_mag = smin + ii*ds
                 snap = traj_data[i]
                 if (mesh_flag):
-                    futures.append( pool.apply_async( hub.get_saxs_intensity_mesh, [s_mag, snap] ) )
+                    futures.append( pool.apply_async( hub.get_saxs_intensity_mesh, [s_mag, snap, True, 'sphere'] ) )
                 else:
-                    futures.append( pool.apply_async( hub.get_saxs_intensity, [s_mag, snap] ) )    
+                    futures.append( pool.apply_async( hub.get_saxs_intensity, [s_mag, snap, True, 'sphere'] ) ) 
+                    #get_saxs_intensity_mesh(s_mag, snap, my_model_flag=True, form='sphere') 
+                    #  my_model_flag=True : will use my_model conf
+                    #  form='sphere' will use a unit solid sphere form_factor for each particle in conf.
                 q.append(s_mag)
 
 
