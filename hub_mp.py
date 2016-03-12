@@ -1257,7 +1257,7 @@ def form_factor(s, form='sphere'):
     if form=='sphere' :
        f =  sphere_form_factor(s, 1.0)
     elif form=='cylinder':
-       f =  sphere_form_factor(s, 1.0)
+       f =  cylindar_form_factor(s, 1.0, 3.0)
     else:
        print "    unrecognized form_factor typr (%s)"%form   
     return f
