@@ -30,7 +30,7 @@ def read_atomistic_angles(filer):
           line=f.readline().strip('\n').split()
       #print len(phi)    
       return np.array(phi), np.array(theta1), np.array(theta2)   
-
+ 
 
 
 def read_dump(filer, min_step=0, max_step=1e10):
@@ -935,7 +935,7 @@ def plot_hist(x,y,z, filename='hist.pdf'):
     plt.title(r'$\mu_{\phi}=%.2f,\ \sigma_{\phi}=%.2f,\ \ \ \mu_{\theta_1}=%.2f,\ \sigma_{\theta_1}=%.2f,\ \ \ \mu_{\theta_2}=%.2f,\ \sigma_{\theta_2}=%.2f,\ \ \ N=%d$' \
               %(mu_x, sigma_x, mu_y, sigma_y, mu_z, sigma_z, len(x)),  fontsize=10)
     plt.legend(loc='upper right')
-    plt.xlim([-15,15])
+    plt.xlim([-25,25])
     #plt.grid(True)
     #plt.show() 
     with PdfPages(filename) as pdf:
