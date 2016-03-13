@@ -769,6 +769,37 @@ def orientational_order(hub_hub_pairs, snap):
 
 
 
+def snap2psi3(snap, snap2p):
+        psi3_snap = {}
+        step = snap['step']
+        psi3_snap['step'] = step
+        # if (skip_snap and step <= last_timestep): 
+        #     print 'skipping %s' %step
+        #     continue
+        nb_no, nb_list = build_nb_list(snap)
+        hub_hub_pairs = build_hub_hub_pairs(nb_list, nb_no)
+        psi3, N_angles, my_count, psi3_vec, angles = orientational_order(hub_hub_pairs, snap)
+        out='%s %s %s %s\n' % (step, psi3, N_angles, my_count)
+        print '%s %s %s %s' % (step, psi3, N_angles, my_count)
+        # for i, val in enumerate(psi3_vec):
+        #     print i, val
+
+        if (tcl_write_flag):
+            make_sure_path_exists('tcl')
+            tcl_file = 'tcl/'+traj_file+'.psi3.'+str(snap['step'])+".tcl"
+            tcl_out = conf2tcl (snap, cluster_flag=False, box_flag=True, psi3_flag = True, psi3 = psi3_vec) 
+            write_tcl_out (tcl_out, filename=tcl_file)
+            print '# wrote tcl output with psi3 coloring to %s'%tcl_file
+
+        if (psi3_angle_hist_flag):
+            make_sure_path_exists('psi3_angle_hist')
+            pdf_file = 'psi3_angle_hist/'+traj_file+'.hist.'+str(snap['step'])+".pdf"
+            if len(angles)>1:
+               plot_1D_hist (angles, pdf_file) 
+
+        return out, psi3_vec, angles
+
+
 
 
 def traj2psi3(traj_data, filename='psi3_file', skip_snap=True, tcl_write_flag=True, psi3_angle_hist_flag=True):
