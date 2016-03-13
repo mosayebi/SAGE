@@ -83,7 +83,7 @@ if __name__ == "__main__":
             #print("All %d workers are done..."%len(futures))
             break
         time.sleep(10)
-        print("(%d) running(queued)/done workers =  %d / %d" % (cnt, running, len(futures)-running)) 
+        print("(%d) running(queued)/total workers =  %d / %d" % (cnt, running, len(futures))) 
 
     end = time.time()
     print ("time: %s (s) for %d workers [%f]" %((end-start), len(futures), (end-start)/len(futures)))
