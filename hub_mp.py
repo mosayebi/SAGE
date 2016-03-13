@@ -932,7 +932,8 @@ def plot_hist(x,y,z, filename='hist.pdf'):
     #n, bins, patches = plt.hist(z, 30, normed=1, facecolor='blue', alpha=0.5, label='$\\theta_2$')
     plt.xlabel(r'$\mathrm{angle}\ ^\circ$')
     plt.ylabel(r'$\mathrm {probability}$')
-    plt.title(r'$\mu_{\phi}=%.2f,\ \sigma_{\phi}=%.2f\  \mu_{\theta_1}=%.2f,\ \sigma_{\theta_1}=%.2f\  \mu_{\theta_2}=%.2f,\ \sigma_{\theta_2}=%.2f$' %(mu_x, sigma_x, mu_y, sigma_y, mu_z, sigma_z))
+    plt.title(r'$\mu_{\phi}=%.2f,\ \sigma_{\phi}=%.2f,\ \ \ \mu_{\theta_1}=%.2f,\ \sigma_{\theta_1}=%.2f,\ \ \ \mu_{\theta_2}=%.2f,\ \sigma_{\theta_2}=%.2f,\ \ \ N=%d$' \
+              %(mu_x, sigma_x, mu_y, sigma_y, mu_z, sigma_z, len(x)),  fontsize=10)
     plt.legend(loc='upper right')
     plt.xlim([-15,15])
     #plt.grid(True)
