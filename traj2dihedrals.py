@@ -112,5 +112,5 @@ if __name__ == "__main__":
     hub.plot_hist(atom_phi, atom_theta1, atom_theta2, filename='atomistic_hubhub_dihedrals_hist.pdf', x_lim=[-60,60])
 
     atom_phi, atom_theta1, atom_theta2 = hub.read_atomistic_angles('/home/mm15804/SAGE/data/hub-dimer_angles.his')
-    hub.plot_hist(atom_phi, atom_theta1, atom_theta2, filename='atomistic_molmol_dihedrals_hist.pdf', x_lim=[-60,60])
+    hub.plot_hist(atom_phi, atom_theta1, atom_theta2, filename='atomistic_molmol_dihedrals_hist.pdf', x_lim=[-180,180])
 
