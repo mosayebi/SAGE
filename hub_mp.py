@@ -903,7 +903,7 @@ def make_sure_path_exists(path):
 #     return bonded       
 
 
-def plot_hist(x,y,z, filename='hist.pdf'):
+def plot_hist(x,y,z, filename='hist.pdf', x_lim=[-25,25]):
     import matplotlib as mpl
     mpl.use('Agg')  
     import matplotlib.mlab as mlab
@@ -912,7 +912,7 @@ def plot_hist(x,y,z, filename='hist.pdf'):
     from scipy.optimize import curve_fit
     from scipy import stats, integrate
     #print x,y,z
-    (y,z) = (z,y)
+    #(y,z) = (z,y)
     #the histogram of the data
     nx, binsx, patchesx = plt.hist(x, 72, normed=1, facecolor='green', alpha=0.75, label='$\phi$')
     ny, binsy, patchesy = plt.hist(y, 71, normed=1, facecolor='red', alpha=0.6, label=r'$\theta_1$')
@@ -935,7 +935,7 @@ def plot_hist(x,y,z, filename='hist.pdf'):
     plt.title(r'$\mu_{\phi}=%.2f,\ \sigma_{\phi}=%.2f,\ \ \ \mu_{\theta_1}=%.2f,\ \sigma_{\theta_1}=%.2f,\ \ \ \mu_{\theta_2}=%.2f,\ \sigma_{\theta_2}=%.2f,\ \ \ N=%d$' \
               %(mu_x, sigma_x, mu_y, sigma_y, mu_z, sigma_z, len(x)),  fontsize=10)
     plt.legend(loc='upper right')
-    plt.xlim([-25,25])
+    #plt.xlim(x_lim)
     #plt.grid(True)
     #plt.show() 
     with PdfPages(filename) as pdf:
