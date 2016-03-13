@@ -101,7 +101,7 @@ if __name__ == "__main__":
             try:
                 futures[i].get()
             except Exception as e:
-                    print("Error = %s : %s" % (type(e), e))
+                print("Error = %s : %s" % (type(e), e))
 
 N_mol = snap['N']/16 * 2
 out = "#q I(q)\n"   

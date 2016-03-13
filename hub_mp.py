@@ -457,9 +457,6 @@ def sesh2pdb_saxs(sesh_file='sesh_SAGE.txt', pdb_file='sesh_SAGE.pdb'):
 
 
 
-
-
-
         
 
 def PBC(d, box):
@@ -539,6 +536,55 @@ def get_helix_COM_atom_id(mol_id):
   return atom_id   
 
 
+def snap2dihedrals_all(snap):  
+    phi_molmol, theta1_molmol, theta2_molmol = snap2dihedrals_molmol(snap)
+    phi_hubhub, theta1_hubhub, theta2_hubhub = snap2dihedrals_hubhub(snap)
+    return phi_molmol, theta1_molmol, theta2_molmol, phi_hubhub, theta1_hubhub, theta2_hubhub 
+
+def snap2dihedrals_molmol(snap):
+    phi=[]
+    theta1=[]
+    theta2=[]
+    x = snap['coords']
+    p_type = snap['p_type']
+    box = snap['box']
+    step = snap['step']
+    N_mol = snap['N']/16*2
+    
+    for mol in range(0, N_mol, 2):
+         x1,x2,x3,x4 = get_points( x[get_helix_atom_ids(mol),:] ,  x[get_helix_atom_ids(mol+1),:])
+         dihedral, bend1, bend2 = get_angles(x1,x2,x3,x4,box)
+         phi.append(dihedral)
+         theta1.append(bend1)
+         theta2.append(bend2)
+    return phi, theta1, theta2  
+
+def snap2dihedrals_hubhub(snap):
+    x = snap['coords']
+    p_type = snap['p_type']
+    box = snap['box']
+    step = snap['step']
+    N_mol = snap['N']/16*2
+
+    phi=[]
+    theta1=[]
+    theta2=[]
+
+    nb_no, nb_list = build_nb_list(snap)
+    hub_hub_pairs =  build_hub_hub_pairs(nb_list, nb_no)
+
+    for i, pairs in enumerate(hub_hub_pairs):
+         for j, pair in enumerate(pairs):
+                  mol1 = pair[0]
+                  mol2 = pair[1]
+                  if (mol1 >= mol2): continue
+                  x1,x2,x3,x4 = get_points( x[get_helix_atom_ids(mol1),:] ,  x[get_helix_atom_ids(mol2),:])
+                  dihedral, bend1, bend2 = get_angles(x1,x2,x3,x4,box)
+                  phi.append(dihedral)
+                  theta1.append(bend1)
+                  theta2.append(bend2)
+    return phi, theta1, theta2              
+   
 
 
 def build_nb_list(snap):
@@ -650,20 +696,6 @@ def build_hub_hub_pairs(nb_list, nb_no):
                   flag[mol_j] = 1
         if len(hub_arms)>0 : hub_hub_pairs.append(hub_arms)
     return hub_hub_pairs
-
-
-def get_hub_hub_angles(hub_hub_pairs, snap):
-    x = snap['coords']
-    N_mol = snap['N']/16*2
-    box = snap['box']
-
-    print hub_hub_pairs
-    sys.exit()
-
-    for i, pairs in enumerate(hub_hub_pairs):
-        for j in range(len(pairs)):
-            for k in range(j+1,len(pairs)): 
-              break
 
     
 
@@ -872,6 +904,8 @@ def make_sure_path_exists(path):
 
 
 def plot_hist(x,y,z, filename='hist.pdf'):
+    import matplotlib as mpl
+    mpl.use('Agg')  
     import matplotlib.mlab as mlab
     import matplotlib.pyplot as plt
     from matplotlib.backends.backend_pdf import PdfPages
@@ -1076,30 +1110,6 @@ def plot_scatter_hist_sns(x, y):
          pdf.savefig()
     sns.plt.close() 
               
-def traj2angles_plot(traj_data, plot_file = 'angle_hist.pdf' ):
-    phi=[]
-    theta1=[]
-    theta2=[]
-    for s, snap in enumerate(traj_data): 
-        x = snap['coords']
-        p_type = snap['p_type']
-        box = snap['box']
-        step = snap['step']
-        N_mol = snap['N']/16*2
-    
-        for mol in range(0, N_mol, 2):
-            x1,x2,x3,x4 = get_points( x[get_helix_atom_ids(mol),:] ,  x[get_helix_atom_ids(mol+1),:])
-            #print x1,x2,x3,x4 
-            dihedral, bend1, bend2 = get_angles(x1,x2,x3,x4,box)
-            phi.append(dihedral)
-            #print bend1,bend2
-            theta1.append(bend1)
-            theta2.append(bend2)
-    filename =    plot_file+'.angles_hist.pdf'         
-    plot_hist(phi, theta1, theta2, filename ) 
-    #print phi, theta1, theta2
-    #plot_scatter_hist(phi, theta1)
-    #plot_scatter_hist_sns(phi, theta1) 
 
 
 def read_lammps_cluster_log(logfile):   
