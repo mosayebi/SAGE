@@ -935,7 +935,7 @@ def plot_hist(x,y,z, filename='hist.pdf', x_lim=[-25,25]):
     plt.title(r'$\mu_{\phi}=%.2f,\ \sigma_{\phi}=%.2f,\ \ \ \mu_{\theta_1}=%.2f,\ \sigma_{\theta_1}=%.2f,\ \ \ \mu_{\theta_2}=%.2f,\ \sigma_{\theta_2}=%.2f,\ \ \ N=%d$' \
               %(mu_x, sigma_x, mu_y, sigma_y, mu_z, sigma_z, len(x)),  fontsize=10)
     plt.legend(loc='upper right')
-    #plt.xlim(x_lim)
+    plt.xlim(x_lim)
     #plt.grid(True)
     #plt.show() 
     with PdfPages(filename) as pdf:
