@@ -1295,6 +1295,46 @@ def cylinder_form_factor(s, R, L):
     f = scipy.integrate.quad(lambda x: cylinder_form_factor_integrand(s, R, L, x), 1e-10 ,  np.pi/2, epsrel = 1e-10 )
     return f
 
+def core_shell_form_factor(s, Rc, Rs):
+    # see http://www.soft-matter.uni-tuebingen.de/teaching/SASTutorial.pdf
+    rho_c = 0.
+    rho_s = 1.
+    rho_solv = 0.
+    V_s = (4*np.pi/3)* Rs**3
+    V_c = (4*np.pi/3)* Rc**3
+
+    f = 3 * V_c * (rho_c - rho_s   ) * scipy.special.j1( s*Rc ) / (s*Rc) + \
+        3 * V_s * (rho_s - rho_solv) * scipy.special.j1( s*Rs ) / (s*Rs)
+    return f    
+
+def plot_core_shell_form_factor():
+    Rc = 319.4
+    Rs = 323.4
+
+    Ns = 1000
+    ds = (10 - 0,001)/(Ns-1)
+    s = [0.001+i*ds for i in range(Ns)]
+    f = map(lambda x: core_shell_form_factor(x, Rc, Rs), s)
+
+    import matplotlib.pyplot as plt
+    from matplotlib.backends.backend_pdf import PdfPages
+
+    plt.plot(s,f)
+    plt.xlabel('q [1/A]')
+    plt.ylabel('core shell form factor [A.U.]')
+
+    plt.title(r'$\R_c=%.2f,\ R_s=%.2f$' %(Rc, Rs),  fontsize=10)
+
+    #plt.legend(loc='upper right')
+    #plt.axis([40, 160, 0, 0.03])
+    #plt.grid(True)
+    #plt.show() 
+    with PdfPages('core_shell_form_factor.pdf') as pdf:
+         pdf.savefig()
+    plt.close()    
+
+
+
 def form_factor(s, form='sphere'):
     if form=='sphere' :
        f =  sphere_form_factor(s, 1.0)
