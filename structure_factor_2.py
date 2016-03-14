@@ -85,14 +85,14 @@ elif mode==1:
    sq_file = 'ipack.3.932.txt.sq'
 elif mode==2:
    url = 'http://neilsloane.com/ICOSP/icover.3.932.7.4.txt'
-   file = 'icover.3.932.txt'
+   file = 'ipack.3.932.txt'
    snap = hub.read_spherical_packings_www_from_file(file)
-   sq_file = 'icover.3.932.txt.sq'  
+   sq_file = 'ipack.3.932.txt.sq'  
 elif mode==3:
    url = 'http://neilsloane.com/ICOSP/ivol.3.932.7.4.txt'
-   file = 'ivol.3.932.txt'
+   file = 'ivol.3.932.7.4.txt'
    snap = hub.read_spherical_packings_www_from_file(file)
-   sq_file = 'ivol.3.932.txt.sq'
+   sq_file = 'iivol.3.932.7.4.txt.sq'
 elif mode==4:
    url = 'http://neilsloane.com/ICOSP/icover.3.482.4.4.txt'
    file = 'icover.3.482.4.4.txt'
