@@ -99,8 +99,8 @@ if __name__ == "__main__":
     start = time.time()
 
     qmin = 0.01
-    qmax = 5
-    Nq   = 200
+    qmax = 7
+    Nq   = 500
     dq   = (qmax-qmin)/(Nq-1) 
 
     futures=[]
@@ -110,9 +110,9 @@ if __name__ == "__main__":
     with contextlib.closing( Pool() ) as pool:
             for iq in range(Nq):
                 qmod = qmin + iq*dq
-                futures.append( pool.apply_async( get_structure_factor_q, [snap, qmod] ) )
                 q.append(qmod)
-
+                for replica in range(3)    
+                    futures.append( pool.apply_async( get_structure_factor_q, [snap, qmod] ) )
 
 
     #futures[-1].wait()
