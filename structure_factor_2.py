@@ -44,7 +44,6 @@ def get_structure_factor_qv(xm, N_mol, box, qv):
 def get_structure_factor_q(snap, qmod):
     start = time.time()
     xm = snap['coords']
-    p_type = snap['p_type']
     box = snap['box']
     step = snap['step']
     N_mol = snap['N']
