@@ -412,7 +412,7 @@ def read_spherical_packings_www(url='http://neilsloane.com/ICOSP/ipack.3.932.txt
     return snap
 
 def read_spherical_packings_www_from_file(filename):
-    f = open(filename)
+    f = open(filename, 'r')
     cnt = 0
     x = []
     lines=f.readlines()
