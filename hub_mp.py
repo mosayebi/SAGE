@@ -802,7 +802,7 @@ def snap2psi3(snap, snap2p):
 
 
 
-def traj2psi3(traj_data, filename='psi3_file', skip_snap=True, tcl_write_flag=True, psi3_angle_hist_flag=True):
+def traj2psi3_old(traj_data, filename='psi3_file', skip_snap=True, tcl_write_flag=True, psi3_angle_hist_flag=True):
     last_timestep = 0  
     # get the last snapshot already written to filename
     if (not skip_snap): 
@@ -934,7 +934,7 @@ def make_sure_path_exists(path):
 #     return bonded       
 
 
-def plot_hist(x,y,z, filename='hist.pdf', x_lim):
+def plot_hist(x,y,z, filename, x_lim):
     import matplotlib as mpl
     mpl.use('Agg')  
     import matplotlib.mlab as mlab
