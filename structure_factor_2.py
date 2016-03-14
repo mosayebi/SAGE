@@ -106,7 +106,23 @@ elif mode==6:
    sq_file ='sc_sheet.sq' 
 elif mode==7:
    snap = hub.make_random_spherical_shell (32.1451, 620)
-   sq_file ='random_spherical_shell_32.14_620.sq' 
+   sq_file ='random_spherical_shell_32.14_620.sq'
+elif mode==8:
+   url = 'http://neilsloane.com/ICOSP/icover.3.3002.10.10.txt'
+   file = 'icover.3.3002.10.10.txt'
+   snap = hub.read_spherical_packings_www_from_file(file)
+   sq_file = 'icover.3.3002.10.10.txt.sq'  
+elif mode==9:
+   url = 'http://neilsloane.com/ICOSP/icover.3.3242.18.0.txt'
+   file = 'icover.3.3242.18.0.txt'
+   snap = hub.read_spherical_packings_www_from_file(file)
+   sq_file = 'icover.3.3242.18.0.txt.sq'  
+elif mode==10:
+   url = 'http://neilsloane.com/ICOSP/icover.3.312.5.1.txt'
+   file = 'icover.3.312.5.1.txt'
+   snap = hub.read_spherical_packings_www_from_file(file)
+   sq_file = 'icover.3.312.5.1.txt.sq'  
+     
 else:
    print "Error"       
 
