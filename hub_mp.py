@@ -495,6 +495,7 @@ def make_sc_cube (a, L):
 
 
 def make_random_spherical_shell(R, N):
+  np.random.seed()
   x = []
   for i in range(N):
     phi = np.random.uniform(0,np.pi*2)
@@ -1464,6 +1465,7 @@ def get_Aa2(s_vec, spherical_coords, lmax, form):
     return A * np.conj(A)
 
 def get_saxs_intensity(s_mag, snap, my_model_flag=True, form='sphere'):
+    np.random.seed()
     start = time.time()
     lmax = 15
     Ndir = 100
@@ -1563,6 +1565,7 @@ def get_Aa2_mesh(s_mag, mesh, lmax, s_inds, N_mol, form):
 
 
 def get_saxs_intensity_mesh(s_mag, snap, my_model_flag=True, form='sphere'):
+    np.random.seed()
     start = time.time()
     lmax = 15
     Ndir = 200

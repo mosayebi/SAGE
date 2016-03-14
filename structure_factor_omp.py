@@ -42,6 +42,7 @@ def get_structure_factor_qv(xm, N_mol, box, qv):
 
 
 def get_structure_factor_q(snap, qmod):
+    np.random.seed()
     start = time.time()
     x = snap['coords']
     p_type = snap['p_type']
@@ -53,7 +54,7 @@ def get_structure_factor_q(snap, qmod):
     for i in range(N_mol):
         xm [i,:] = x [ hub.get_helix_COM_atom_id(i), :]
 
-    Ndir = 25
+    Ndir = 20
     sum_sq = 0.0
     for idir in range(Ndir):
         q = np.array(random_unit_vector()) * qmod

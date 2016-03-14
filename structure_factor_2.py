@@ -42,6 +42,8 @@ def get_structure_factor_qv(xm, N_mol, box, qv):
 
 
 def get_structure_factor_q(snap, qmod):
+    np.random.seed()
+
     start = time.time()
     xm = snap['coords']
     box = snap['box']
@@ -121,8 +123,7 @@ elif mode==10:
    url = 'http://neilsloane.com/ICOSP/icover.3.312.5.1.txt'
    file = 'icover.3.312.5.1.txt'
    snap = hub.read_spherical_packings_www_from_file(file)
-   sq_file = 'icover.3.312.5.1.txt.sq'  
-     
+   sq_file = 'icover.3.312.5.1.txt.sq'    
 else:
    print "Error"       
 
