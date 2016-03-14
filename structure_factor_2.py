@@ -70,7 +70,7 @@ elif len(sys.argv) == 2 :
    traj_file = sys.argv[1]
    mode = 0
 else:
-    print 'Usage: %s dump_file [min_timestep max_timestep]' % (sys.argv[0])
+    print 'Usage: %s dump_file mode' % sys.argv[0]
     sys.exit(1)
 
 
@@ -81,22 +81,22 @@ if mode==0:
 elif mode==1:
    url = 'http://neilsloane.com/ICOSP/ipack.3.932.txt'
    file = 'ipack.3.932.txt'
-   sanp = hub.read_spherical_packings_www_from_file(file)
+   snap = hub.read_spherical_packings_www_from_file(file)
    sq_file = 'ipack.3.932.txt.sq'
 elif mode==2:
    url = 'http://neilsloane.com/ICOSP/icover.3.932.7.4.txt'
    file = 'icover.3.932.txt'
-   sanp = hub.read_spherical_packings_www_from_file(file)
+   snap = hub.read_spherical_packings_www_from_file(file)
    sq_file = 'icover.3.932.txt.sq'  
 elif mode==3:
    url = 'http://neilsloane.com/ICOSP/ivol.3.932.7.4.txt'
    file = 'ivol.3.932.txt'
-   sanp = hub.read_spherical_packings_www_from_file(file)
+   snap = hub.read_spherical_packings_www_from_file(file)
    sq_file = 'ivol.3.932.txt.sq'
 elif mode==4:
    url = 'http://neilsloane.com/ICOSP/icover.3.482.4.4.txt'
    file = 'icover.3.482.4.4.txt'
-   sanp = hub.read_spherical_packings_www_from_file(file)
+   snap = hub.read_spherical_packings_www_from_file(file)
    sq_file = 'icover.3.482.4.4.txt.sq'  
 elif mode==5:
    snap = hub.make_sc_cube (4, 37)
@@ -106,7 +106,9 @@ elif mode==6:
    sq_file ='sc_sheet.sq' 
 elif mode==7:
    snap = hub.make_random_spherical_shell (32.1451, 620)
-   sq_file ='random_spherical_shell_32.14_620.sq'      
+   sq_file ='random_spherical_shell_32.14_620.sq' 
+else:
+   print "Error"       
 
 
 # snap = hub.make_sc_sheet (4, 100)
