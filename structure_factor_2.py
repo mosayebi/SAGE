@@ -135,7 +135,7 @@ if __name__ == "__main__":
             for iq in range(Nq):
                 qmod = qmin + iq*dq
                 q.append(qmod)
-                for replica in range(3)    
+                for replica in range(4):   
                     futures.append( pool.apply_async( get_structure_factor_q, [snap, qmod] ) )
 
 
