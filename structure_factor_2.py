@@ -74,6 +74,7 @@ else:
     sys.exit(1)
 
 
+print "mode %s"%mode
 if mode==0:
    snap = hub.read_sesh_SAGE(traj_file)
    sq_file = traj_file+'.sq'
@@ -130,7 +131,6 @@ if __name__ == "__main__":
     futures=[]
     q = []
     
-
     with contextlib.closing( Pool() ) as pool:
             for iq in range(Nq):
                 qmod = qmin + iq*dq
