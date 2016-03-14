@@ -432,11 +432,21 @@ def read_sesh_SAGE(filer):
         line=f.readline().strip('\n').split()
         if not line: break
         x.append([float(line[0]), float(line[1]), float(line[2])])
+
+    #move COM to origin   
+    x = np.array(x)
+    COM = [sum(p)/len(p) for p in zip(*x)]
+    print "     COM moved to origin (was %s)"%COM
+    for i in range(len(x)):
+        x[i,:] = x[i,:] - COM 
+
     snap = {}
-    snap ['coords'] = np.array(x)
+    snap ['coords'] = x
     snap ['N'] = len(x)
     snap ['step'] = 'sesh_SAGE'
     snap ['traj'] =  filer
+    snap['box'] = np.array ( [10*np.max(x), 10*np.max(x), 10*np.max(x)] )
+
     return snap
 
 
