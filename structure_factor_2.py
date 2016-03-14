@@ -80,6 +80,11 @@ else:
 mesh_flag = True 
 snap = hub.read_sesh_SAGE(traj_file)
 sq_file = traj_file+'.sq'
+
+url = 'http://neilsloane.com/ICOSP/ipack.3.932.txt'
+sanp = hub.read_spherical_packings_www(url)
+sq_file = 'ipack.3.932.txt.sq'
+
 # snap = hub.make_sc_sheet (4, 100)
 # sq_file ='sc_sheet.saxs'    
 # snap = hub.make_sc_cube (4, 40)
