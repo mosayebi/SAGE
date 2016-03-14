@@ -65,7 +65,7 @@ def get_structure_factor_q(snap, qmod):
 
 if len(sys.argv) == 3 :
    traj_file = sys.argv[1]
-   mode = sys.argv[1]
+   mode = int(sys.argv[1])
 elif len(sys.argv) == 2 :
    traj_file = sys.argv[1]
    mode = 0
