@@ -95,9 +95,9 @@ elif mode==3:
    sq_file = 'ivol.3.932.txt.sq'
 elif mode==4:
    url = 'http://neilsloane.com/ICOSP/icover.3.482.4.4.txt'
-   file = 'icover.3.482.4.4'
+   file = 'icover.3.482.4.4.txt'
    sanp = hub.read_spherical_packings_www_from_file(file)
-   sq_file = 'icover.3.482.4.4.txt'  
+   sq_file = 'icover.3.482.4.4.txt.sq'  
 elif mode==5:
    snap = hub.make_sc_cube (4, 37)
    sq_file ='sc_cube.sq'
