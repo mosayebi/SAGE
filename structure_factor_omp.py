@@ -22,16 +22,23 @@ def random_unit_vector():
     z = np.cos( theta )
     return (x,y,z)
 
+
 def get_structure_factor_qv(xm, N_mol, box, qv):
     #q = np.array(random_unit_vector()) * qmod
     sq = N_mol
+    drs = []
     for mol1_id in range(N_mol):
       for mol2_id in range(mol1_id+1, N_mol):
         if (mol1_id >= mol2_id): continue 
         dr = xm [ mol2_id, :] - xm [ mol1_id, :]
-        dr = hub.PBC (dr, box)
-        sq += 2*np.cos( np.dot(dr,qv) )
-    return sq/N_mol    
+        drs.append(dr)
+        # dr = hub.PBC (dr, box)
+        # sq += 2*np.cos( np.dot(dr,qv) )
+    
+    drs = map(lambda x: hub.PBC(x, box), drs)
+    sqs = map(lambda x: 2*np.cos(np.dot(x,qv)), drs)
+    sq  = np.sum(sqs) / N_mol
+    return sq  
 
 
 def get_structure_factor_q(snap, qmod):
@@ -46,7 +53,7 @@ def get_structure_factor_q(snap, qmod):
     for i in range(N_mol):
         xm [i,:] = x [ hub.get_helix_COM_atom_id(i), :]
 
-    Ndir = 50
+    Ndir = 25
     sum_sq = 0.0
     for idir in range(Ndir):
         q = np.array(random_unit_vector()) * qmod
@@ -90,8 +97,8 @@ if __name__ == "__main__":
     start = time.time()
 
     qmin = 0.01
-    qmax = 5.0
-    Nq   = 500
+    qmax = 7
+    Nq   = 200
     dq   = (qmax-qmin)/(Nq-1) 
 
     futures=[]
