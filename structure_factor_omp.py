@@ -97,7 +97,7 @@ if __name__ == "__main__":
     start = time.time()
 
     qmin = 0.01
-    qmax = 7
+    qmax = 5
     Nq   = 200
     dq   = (qmax-qmin)/(Nq-1) 
 
