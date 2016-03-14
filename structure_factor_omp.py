@@ -22,6 +22,17 @@ def random_unit_vector():
     z = np.cos( theta )
     return (x,y,z)
 
+def get_structure_factor_qv(xm, N_mol, box, qv):
+    #q = np.array(random_unit_vector()) * qmod
+    sq = N_mol
+    for mol1_id in range(N_mol):
+      for mol2_id in range(mol1_id+1, N_mol):
+        if (mol1_id >= mol2_id): continue 
+        dr = xm [ mol2_id, :] - xm [ mol1_id, :]
+        dr = hub.PBC (dr, box)
+        sq += 2*np.cos( np.dot(dr,qv) )
+    return sq/N_mol    
+
 
 def get_structure_factor_q(snap, qmod):
     start = time.time()
@@ -35,24 +46,16 @@ def get_structure_factor_q(snap, qmod):
     for i in range(N_mol):
         xm [i,:] = x [ hub.get_helix_COM_atom_id(i), :]
 
-
-    Ndir = 20
-    sum_sq = 0. + 0.j
+    Ndir = 50
+    sum_sq = 0.0
     for idir in range(Ndir):
-        q = -1j * np.array(random_unit_vector()) * qmod
-        sq = N_mol
-        for mol1_id in range(N_mol):
-          for mol2_id in range(mol1_id+1, N_mol):
-            if (mol1_id == mol2_id): continue 
-            dr = xm [ mol2_id, :] - xm [ mol1_id, :]
-            dr = hub.PBC (dr, box)
-            sq += np.exp( np.dot(dr,q) )
-        sum_sq += sq/N_mol
-    #print sum_sq/Ndir
+        q = np.array(random_unit_vector()) * qmod
+        sum_sq += get_structure_factor_qv(xm, N_mol, box, q)        
     end = time.time()
     print("[trajectory timestep %s]: averaging s(q) for q = %s over %d directions for %d molec. took %s (s). {process %s}" \
         % (step, qmod, Ndir, N_mol, end-start, current_process().pid))
     return sum_sq/Ndir
+
 
 
 
@@ -77,7 +80,8 @@ else:
 # max_timestep = 1e10
 # traj_file = '/Users/mm15804/scratch/SAGE/psi3_test/dump_0.05.lammpstrj'
 traj_data = hub.read_dump(traj_file, min_timestep, max_timestep)
-sq_file = traj_file+'.sq'
+traj_data = traj_data[-10:]
+sq_file = traj_file+'.sq.03'
 
 
 print("\nNumber of cores available equals %d\n" % cpu_count())
@@ -86,13 +90,14 @@ if __name__ == "__main__":
     start = time.time()
 
     qmin = 0.01
-    qmax = 3.0
-    Nq   = 80
+    qmax = 5.0
+    Nq   = 500
     dq   = (qmax-qmin)/(Nq-1) 
 
     futures=[]
     q = []
     
+
     with contextlib.closing( Pool() ) as pool:
         for i in range(len(traj_data)):
             for iq in range(Nq):
@@ -128,12 +133,14 @@ if __name__ == "__main__":
     print ("time: %s (s) for %d workers [%f]" %((end-start), len(futures), (end-start)/len(futures)))
 
     sum_sq = {}
+    sum_sq2= {}
     N_sq = {}
     for i in range(0,len(futures)):
         if futures[i].successful():
             sq = futures[i].get()
             qmod = q[i]
             sum_sq [qmod] = (sum_sq.get(qmod, 0.0)) + sq
+            sum_sq2[qmod] = (sum_sq2.get(qmod, 0.0)) + sq*sq
             N_sq [qmod] = (N_sq.get(qmod, 0)) + 1
         else:
             print("Worker %d failed!" % i)
@@ -142,10 +149,15 @@ if __name__ == "__main__":
             except Exception as e:
                     print("Error = %s : %s" % (type(e), e))
 
+
+
 N_mol = snap['N']/16 * 2
-out = "#q s(q)\n"   
+out = "#q s(q) err N\n"   
 for key in sorted(sum_sq, key=float) :
-    if (N_sq[key] > 0): out += "%s %s\n" % (key, abs(sum_sq[key])/N_sq[key]/N_mol) 
+    if N_sq[key]>0 : 
+       avg = sum_sq[key]/N_sq[key]
+       avg2 = sum_sq2[key]/N_sq[key]
+       out += "%s %s %s %s\n" % (key, avg, np.sqrt((avg2 - avg*avg)/N_sq[key]), N_sq[key] ) 
 
 print("\n%s\n"% out)
 f = open(sq_file, 'w')
