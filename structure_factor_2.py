@@ -48,7 +48,7 @@ def get_structure_factor_q(snap, qmod):
     step = snap['step']
     N_mol = snap['N']
 
-    Ndir = 25
+    Ndir = 20
     sum_sq = 0.0
     for idir in range(Ndir):
         q = np.array(random_unit_vector()) * qmod
@@ -140,9 +140,10 @@ if __name__ == "__main__":
     with contextlib.closing( Pool() ) as pool:
             for iq in range(Nq):
                 qmod = qmin + iq*dq
-                q.append(qmod)
                 for replica in range(4):   
                     futures.append( pool.apply_async( get_structure_factor_q, [snap, qmod] ) )
+                    q.append(qmod)
+
 
 
     #futures[-1].wait()
