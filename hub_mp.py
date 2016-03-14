@@ -421,6 +421,20 @@ def make_sc_sheet (a, L):
   snap ['coords'] = np.array(x)
   snap ['N'] = len(x)  
   snap ['step'] = 'sc_sheet on xy plane at z=0 with a=%s'%a
+
+  x = np.array(x)
+  #move COM to origin   
+  x = np.array(x) 
+  COM = [sum(p)/len(p) for p in zip(*x)]
+  print "     COM moved to origin (was %s)"%COM
+  for i in range(len(x)):
+      x[i,:] = x[i,:] - COM 
+  snap = {}
+  snap ['coords'] = x
+  snap ['N'] = len(x)
+  snap ['step'] = 'sc_sheet on xy plane at z=0 with a=%s, N=%s'% (a, len(x))
+  snap['box'] = np.array ( [10*np.max(x), 10*np.max(x), 10*np.max(x)] )
+  snap['traj'] = 'sc_sheet'
   print 'sc_sheet with a=%s and N=%s is generated at z=0' % (a, snap['N'])
   return snap
 
@@ -431,13 +445,45 @@ def make_sc_cube (a, L):
     for j in range(-Nrow/2, Nrow/2):
        for k in range(-Nrow/2, Nrow/2):
           x.append([i*a, j*a, k*a])
+  
+  x = np.array(x)
+  #move COM to origin   
+  x = np.array(x) 
+  COM = [sum(p)/len(p) for p in zip(*x)]
+  print "     COM moved to origin (was %s)"%COM
+  for i in range(len(x)):
+      x[i,:] = x[i,:] - COM 
   snap = {}
-  snap ['coords'] = np.array(x)
-  snap ['N'] = len(x)  
-  snap ['step'] = 'sc_cube with a=%s'%a
+  snap ['coords'] = x
+  snap ['N'] = len(x)
+  snap ['step'] = 'sc_cube with a=%s, N=%s'% (a, len(x))
+  snap['box'] = np.array ( [10*np.max(x), 10*np.max(x), 10*np.max(x)] )
+  snap['traj'] = 'sc_cube'
+
   print 'sc_cube with a=%s and N=%s is generated' % (a, snap['N'])
   return snap
 
+
+def make_random_spherical_shell(R, N):
+  x = []
+  for i in range(N):
+    phi = np.random.uniform(0,np.pi*2)
+    costheta = np.random.uniform(-1,1)
+
+    theta = np.arccos( costheta )
+    x1 = R* np.sin( theta) * np.cos( phi )
+    x2 = R* np.sin( theta) * np.sin( phi )
+    x3 = R* np.cos( theta )
+    x.append([x1, x2, x3]) 
+  x = np.array(x)
+  snap = {}
+  snap ['coords'] = x
+  snap ['N'] = len(x)
+  snap ['step'] = 'random spherical shell with R=%s, N=%s'% (R, len(x))
+  snap['box'] = np.array ( [10*np.max(x), 10*np.max(x), 10*np.max(x)] )
+  snap['traj'] = 'make_random_spherical_shell'
+  print 'generated a random spherical shell with R=%s, N=%s'% (R, len(x))
+  return snap    
 
 
 def read_sesh_SAGE(filer):

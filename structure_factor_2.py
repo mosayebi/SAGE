@@ -63,27 +63,46 @@ def get_structure_factor_q(snap, qmod):
 
 
 
-if len(sys.argv) == 2 :
+if len(sys.argv) == 3 :
    traj_file = sys.argv[1]
-   max_timestep = 1e10
-   min_timestep = 0
-elif len(sys.argv) == 4 :
+   mode = sys.argv[1]
+elif len(sys.argv) == 2 :
    traj_file = sys.argv[1]
-   min_timestep = float(sys.argv[2])
-   max_timestep = float(sys.argv[3])
+   mode = 0
 else:
     print 'Usage: %s dump_file [min_timestep max_timestep]' % (sys.argv[0])
     sys.exit(1)
 
 
+if mode==0:
+   snap = hub.read_sesh_SAGE(traj_file)
+   sq_file = traj_file+'.sq'
+elif mode==1
+   url = 'http://neilsloane.com/ICOSP/ipack.3.932.txt'
+   sanp = hub.read_spherical_packings_www(url)
+   sq_file = 'ipack.3.932.txt.sq'
+elif mode==2
+   url = 'http://neilsloane.com/ICOSP/icover.3.932.7.4.txt'
+   sanp = hub.read_spherical_packings_www(url)
+   sq_file = 'icover.3.932.txt.sq'  
+elif mode==3
+   url = 'http://neilsloane.com/ICOSP/ivol.3.932.7.4.txt'
+   sanp = hub.read_spherical_packings_www(url)
+   sq_file = 'ivol.3.932.txt.sq'
+elif mode==4
+   url = 'http://neilsloane.com/ICOSP/icover.3.482.4.4.txt'
+   sanp = hub.read_spherical_packings_www(url)
+   sq_file = 'icover.3.482.4.4.txt'  
+elif mode==5
+   snap = hub.make_sc_cube (4, 37)
+   sq_file ='sc_cube.sq'
+elif mode==6
+   snap = hub.make_sc_sheet (4, 100)
+   sq_file ='sc_sheet.sq' 
+elif mode==7
+   snap = hub.make_random_spherical_shell (32.1451, 620)
+   sq_file ='random_spherical_shell_32.14_620.sq'      
 
-mesh_flag = True 
-snap = hub.read_sesh_SAGE(traj_file)
-sq_file = traj_file+'.sq'
-
-url = 'http://neilsloane.com/ICOSP/ipack.3.932.txt'
-sanp = hub.read_spherical_packings_www(url)
-sq_file = 'ipack.3.932.txt.sq'
 
 # snap = hub.make_sc_sheet (4, 100)
 # sq_file ='sc_sheet.saxs'    
