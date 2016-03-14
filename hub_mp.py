@@ -441,7 +441,7 @@ def read_sesh_SAGE(filer):
         x[i,:] = x[i,:] - COM 
 
     snap = {}
-    snap ['coords'] = x
+    snap ['coords'] = x/10
     snap ['N'] = len(x)
     snap ['step'] = 'sesh_SAGE'
     snap ['traj'] =  filer
