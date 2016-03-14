@@ -78,6 +78,7 @@ if __name__ == "__main__":
 
     #futures[-1].wait()
     cnt = 0
+    print_flag=[0]*len(futures)
     while True:
         all_finished = True
         running = 0
@@ -86,7 +87,9 @@ if __name__ == "__main__":
         for i in range(0,len(futures)):
             if futures[i].ready():
                 out, psi3_vec, angles = futures[i].get()
-                print("Worker %d has finished with following output %s" % (i, out))
+                if print_flag[i] == 0 : 
+                    print("Worker %d has finished with following output %s" % (i, out))
+                    print_flag[i] == 1
             else:
                 all_finished = False
                 running += 1
