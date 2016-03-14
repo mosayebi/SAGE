@@ -104,7 +104,7 @@ if __name__ == "__main__":
     print ("time: %s (s) for %d workers [%f]" %((end-start), len(futures), (end-start)/len(futures)))
 
 
-
+    print "***************************************"
     print "\ndata collection took %f (s)\n" % (end-start)
 
 
@@ -123,6 +123,8 @@ if __name__ == "__main__":
                 print("Error = %s : %s" % (type(e), e))
 
 
+
+    print ""
     if (len(all_angles)>0) :
         hub.make_sure_path_exists('psi3_angle_hist')
         pdf_file = 'psi3_angle_hist/'+traj_file+'.total_hist.'+str(traj_data[0]['step'])+'_'+str(traj_data[-1]['step'])+".pdf"
@@ -131,6 +133,7 @@ if __name__ == "__main__":
         file = open (txt_file, 'w')
         for angle in all_angles:
            file.write(str(float(angle)))
+           print "polygon angles involved in psi3 calculation are written to %s" % txt_file
         file.close()   
 
     if not output=='' :
