@@ -73,7 +73,7 @@ if __name__ == "__main__":
                 print 'skipping %s' % snap['step']
              else :   
                 futures.append( pool.apply_async( hub.snap2psi3, \
-                    [snap, skip_snap, skip_snap, tcl_write_flag, psi3_angle_hist_flag] ) ) 
+                    [snap, skip_snap, tcl_write_flag, psi3_angle_hist_flag] ) ) 
    
 
     #futures[-1].wait()

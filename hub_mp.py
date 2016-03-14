@@ -769,7 +769,7 @@ def orientational_order(hub_hub_pairs, snap):
 
 
 
-def snap2psi3(snap, snap2p):
+def snap2psi3(snap, skip_snap=True, tcl_write_flag=True, psi3_angle_hist_flag=True):
         psi3_snap = {}
         step = snap['step']
         psi3_snap['step'] = step
@@ -1310,9 +1310,9 @@ def core_shell_form_factor(s, Rc, Rs):
 def plot_core_shell_form_factor():
     Rc = 319.4
     Rs = 323.4
-
-    Ns = 1000
-    ds = (10 - 0,001)/(Ns-1)
+    
+    Ns = 10000
+    ds = (2 - 0.001)/(Ns-1)
     s = [0.001+i*ds for i in range(Ns)]
     f = map(lambda x: core_shell_form_factor(x, Rc, Rs), s)
 
@@ -1323,7 +1323,7 @@ def plot_core_shell_form_factor():
     plt.xlabel('q [1/A]')
     plt.ylabel('core shell form factor [A.U.]')
 
-    plt.title(r'$\R_c=%.2f,\ R_s=%.2f$' %(Rc, Rs),  fontsize=10)
+    plt.title(r'$R_c=%.2f,\ R_s=%.2f$' %(Rc, Rs),  fontsize=10)
 
     #plt.legend(loc='upper right')
     #plt.axis([40, 160, 0, 0.03])
@@ -1331,7 +1331,12 @@ def plot_core_shell_form_factor():
     #plt.show() 
     with PdfPages('core_shell_form_factor.pdf') as pdf:
          pdf.savefig()
-    plt.close()    
+    plt.close()  
+
+    file =open('core_shell_form_factor.txt', 'w')
+    for i in range(len(s)):
+      file.write("%s %s\n"% (s[i], f[i]))
+    file.close()  
 
 
 
