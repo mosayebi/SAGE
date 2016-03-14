@@ -769,7 +769,7 @@ def orientational_order(hub_hub_pairs, snap):
 
 
 
-def snap2psi3(snap, skip_snap=True, tcl_write_flag=True, psi3_angle_hist_flag=True):
+def snap2psi3(snap, traj_file, skip_snap=True, tcl_write_flag=True, psi3_angle_hist_flag=True):
         psi3_snap = {}
         step = snap['step']
         psi3_snap['step'] = step
@@ -780,7 +780,7 @@ def snap2psi3(snap, skip_snap=True, tcl_write_flag=True, psi3_angle_hist_flag=Tr
         hub_hub_pairs = build_hub_hub_pairs(nb_list, nb_no)
         psi3, N_angles, my_count, psi3_vec, angles = orientational_order(hub_hub_pairs, snap)
         out='%s %s %s %s\n' % (step, psi3, N_angles, my_count)
-        print '%s %s %s %s' % (step, psi3, N_angles, my_count)
+        #print '%s %s %s %s' % (step, psi3, N_angles, my_count)
         # for i, val in enumerate(psi3_vec):
         #     print i, val
 

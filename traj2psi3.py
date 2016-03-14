@@ -73,7 +73,7 @@ if __name__ == "__main__":
                 print 'skipping %s' % snap['step']
              else :   
                 futures.append( pool.apply_async( hub.snap2psi3, \
-                    [snap, skip_snap, tcl_write_flag, psi3_angle_hist_flag] ) ) 
+                    [snap, traj_file, skip_snap, tcl_write_flag, psi3_angle_hist_flag] ) ) 
    
 
     #futures[-1].wait()
@@ -95,7 +95,7 @@ if __name__ == "__main__":
             #print("All %d workers are done..."%len(futures))
             break
         time.sleep(10)
-        print("(%d) running(queued)/total workers =  %d / %d" % (cnt, running, len(futures))) 
+        print("(%d) done/total workers =  %d / %d" % (cnt, len(futures)-running, len(futures))) 
 
     end = time.time()
     print ("time: %s (s) for %d workers [%f]" %((end-start), len(futures), (end-start)/len(futures)))
@@ -121,7 +121,7 @@ if __name__ == "__main__":
 
 
     if (len(all_angles)>0) :
-        make_sure_path_exists('psi3_angle_hist')
+        hub.make_sure_path_exists('psi3_angle_hist')
         pdf_file = 'psi3_angle_hist/'+traj_file+'.total_hist.'+str(traj_data[0]['step'])+'_'+str(traj_data[-1]['step'])+".pdf"
         hub.plot_1D_hist (all_angles, pdf_file) 
 
