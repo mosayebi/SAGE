@@ -80,19 +80,23 @@ if mode==0:
    sq_file = traj_file+'.sq'
 elif mode==1:
    url = 'http://neilsloane.com/ICOSP/ipack.3.932.txt'
-   sanp = hub.read_spherical_packings_www(url)
+   file = 'ipack.3.932.txt'
+   sanp = hub.read_spherical_packings_www_from_file(file)
    sq_file = 'ipack.3.932.txt.sq'
 elif mode==2:
    url = 'http://neilsloane.com/ICOSP/icover.3.932.7.4.txt'
-   sanp = hub.read_spherical_packings_www(url)
+   file = 'icover.3.932.txt'
+   sanp = hub.read_spherical_packings_www_from_file(file)
    sq_file = 'icover.3.932.txt.sq'  
 elif mode==3:
    url = 'http://neilsloane.com/ICOSP/ivol.3.932.7.4.txt'
-   sanp = hub.read_spherical_packings_www(url)
+   file = 'ivol.3.932.txt'
+   sanp = hub.read_spherical_packings_www_from_file(file)
    sq_file = 'ivol.3.932.txt.sq'
 elif mode==4:
    url = 'http://neilsloane.com/ICOSP/icover.3.482.4.4.txt'
-   sanp = hub.read_spherical_packings_www(url)
+   file = 'icover.3.482.4.4'
+   sanp = hub.read_spherical_packings_www_from_file(file)
    sq_file = 'icover.3.482.4.4.txt'  
 elif mode==5:
    snap = hub.make_sc_cube (4, 37)

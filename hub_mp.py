@@ -411,6 +411,36 @@ def read_spherical_packings_www(url='http://neilsloane.com/ICOSP/ipack.3.932.txt
     snap['traj'] = url
     return snap
 
+def read_spherical_packings_www_from_file(filename):
+    f = open(filename)
+    cnt = 0
+    x = []
+    lines=f.readlines()
+    N = len(lines)/3
+    x = np.zeros((N, 3))
+    for i, line in enumerate(lines):
+      x[i/3, i%3] = line.strip('\n')
+    
+    x = np.array(x)
+
+    #move COM to origin   
+    x = np.array(x) 
+    COM = [sum(p)/len(p) for p in zip(*x)]
+    print "     COM moved to origin (was %s)"%COM
+    for i in range(len(x)):
+        x[i,:] = x[i,:] - COM 
+
+    x = x * 32.1451   # this is to get a same size sphere as Sesh's    
+
+    snap = {}
+    snap ['coords'] = x
+    snap ['N'] = N
+    snap ['step'] = 'sesh_SAGE with midpoints at every polygon face'
+    snap['box'] = np.array ( [10*np.max(x), 10*np.max(x), 10*np.max(x)] )
+    snap['traj'] = filename
+    return snap
+
+
 def make_sc_sheet (a, L):
   Nrow = int(L/a)
   x = []
