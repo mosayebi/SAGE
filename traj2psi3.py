@@ -124,7 +124,11 @@ if __name__ == "__main__":
         hub.make_sure_path_exists('psi3_angle_hist')
         pdf_file = 'psi3_angle_hist/'+traj_file+'.total_hist.'+str(traj_data[0]['step'])+'_'+str(traj_data[-1]['step'])+".pdf"
         hub.plot_1D_hist (all_angles, pdf_file) 
-
+        txt_file = 'psi3_angle_hist/'+traj_file+'.angles.'+str(traj_data[0]['step'])+'_'+str(traj_data[-1]['step'])+".txt"
+        file = open (txt_file, 'w')
+        for angle in all_angles:
+           file.write(str(float(angle)))
+        file.close()   
 
     if not output=='' :
         output = "#"+time.strftime("%c")+"\n#step psi3 N_angles count(arms>=2)\n"+output
