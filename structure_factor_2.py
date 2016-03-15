@@ -180,7 +180,19 @@ elif mode == 18 :
     file='/projects/t3/mm15804/SAGE/model_5.3/hub_assembly/dump_1.50.lammpstrj'
     traj_data = hub.read_dump(file, 1, 1e10)
     snap = traj_data[-1]
-    sq_file = 'model51hub_dump_1.50.lammpstrj.sq.03'
+    sq_file = 'model53hub_dump_1.50.lammpstrj.sq.03'
+
+elif mode == 19 :
+    file='/projects/t3/mm15804/SAGE/model_5.3/hub_assembly/dump_0.50.lammpstrj'
+    traj_data = hub.read_dump(file, 1, 1e10)
+    snap = traj_data[-1]
+    sq_file = 'model53hub_dump_0.50.lammpstrj.sq.03'    
+
+elif mode == 20 :
+    file='/projects/t3/mm15804/SAGE/model_5.3/pure_hubs_assembly/dump_0.50.lammpstrj'
+    traj_data = hub.read_dump(file, 1, 1e10)
+    snap = traj_data[-1]
+    sq_file = 'model53pure_dump_0.50.lammpstrj.sq.03'   
 
 else:
    print "Error"       
