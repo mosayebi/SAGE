@@ -274,7 +274,7 @@ elif mode == 24 :
                 cnt += 1
                 print cnt, p_type[cnt]
             xx.append(x[cnt,:]) 
-            cnt += 1
+            #cnt += 1
         COM = [sum(p)/len(p) for p in zip(*xx)]   
         xm [i,:] = COM 
         print '****', i,cnt, p_type[cnt], xm[i,:]
