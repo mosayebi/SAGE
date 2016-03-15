@@ -170,6 +170,12 @@ elif mode==16:
    snap = hub.make_random_spherical_shell (32.1451, 1860)
    sq_file ='random_spherical_shell_32.14_1860.sq' 
 
+elif mode==17:
+   url = 'http://neilsloane.com/ICOSP/ivol.3.1212.11.0.txt'
+   file = 'ivol.3.1212.11.0.txt'
+   snap = hub.read_spherical_packings_www_from_file(file)
+   sq_file = 'ivol.3.1212.11.0.txt.sq'
+
 else:
    print "Error"       
 
