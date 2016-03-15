@@ -113,7 +113,7 @@ else:
 # max_timestep = 1e10
 # traj_file = '/Users/mm15804/scratch/SAGE/psi3_test/dump_0.05.lammpstrj'
 traj_data = hub.read_dump(traj_file, min_timestep, max_timestep)
-traj_data = traj_data[-5:]
+traj_data = traj_data[-10:]
 sq_file = traj_file+'.hubhub.sq.03'
 
 
