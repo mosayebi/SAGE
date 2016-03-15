@@ -176,6 +176,12 @@ elif mode==17:
    snap = hub.read_spherical_packings_www_from_file(file)
    sq_file = 'ivol.3.1212.11.0.txt.sq'
 
+elif mode == 18 :
+    file='/projects/t3/mm15804/SAGE/model_5.3/hub_assembly/dump_1.50.lammpstrj'
+    traj_data = hub.read_dump(traj_file, min_timestep, max_timestep)
+    snap = traj_data[-1]
+    sq_file = 'model51_hub_dump_1.50.lammpstrj.sq.03'
+    
 else:
    print "Error"       
 
