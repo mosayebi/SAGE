@@ -50,9 +50,12 @@ def get_structure_factor_q(snap, qmod):
     step = snap['step']
     N_mol = snap['N']/16 * 2
 
-    xm =  np.zeros((N_mol,3))
-    for i in range(N_mol):
-        xm [i,:] = x [ hub.get_helix_COM_atom_id(i), :]
+    # xm =  np.zeros((N_mol,3))
+    # for i in range(N_mol):
+    #     xm [i,:] = x [ hub.get_helix_COM_atom_id(i), :]
+    snap = snap2hubconf(snap)
+    xm = snap['coords']
+    N_mol = snap['N']
 
     Ndir = 20
     sum_sq = 0.0
@@ -65,7 +68,29 @@ def get_structure_factor_q(snap, qmod):
     return sum_sq/Ndir
 
 
-
+def snap2hubconf(snap):
+    x = snap['coords']
+    p_type = snap['p_type']
+    box = snap['box']
+    step = snap['step']
+    N_mol = snap['N']/16*2
+    N_hub = N_mol/6
+    print "Nmol=%s , N_hub=%s"%(N_mol, N_hub)
+    xm = np.zeros((N_hub,3))
+    cnt = 0 
+    for i in range(N_hub):  
+        xx = [] 
+        for p in range(3):
+            while not p_type[cnt] == 14:
+                cnt += 1
+            #print cnt, i, p, p_type[cnt]
+            xx.append(x[cnt,:]) 
+            cnt += 1
+        COM = [sum(p)/len(p) for p in zip(*xx)]   
+        xm [i,:] = COM 
+    snap['coords'] = xm
+    snap['N'] = N_hub
+    return snap
 
 
 
@@ -89,7 +114,7 @@ else:
 # traj_file = '/Users/mm15804/scratch/SAGE/psi3_test/dump_0.05.lammpstrj'
 traj_data = hub.read_dump(traj_file, min_timestep, max_timestep)
 traj_data = traj_data[-5:]
-sq_file = traj_file+'.sq.03'
+sq_file = traj_file+'.hubhub.sq.03'
 
 
 print("\nNumber of cores available equals %d\n" % cpu_count())
