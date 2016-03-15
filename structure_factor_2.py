@@ -163,7 +163,7 @@ if __name__ == "__main__":
 
     qmin = 0.01
     qmax = 7
-    Nq   = 700
+    Nq   = 1000
     dq   = (qmax-qmin)/(Nq-1) 
 
     futures=[]
