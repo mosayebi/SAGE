@@ -138,7 +138,10 @@ elif mode==13:
    url = 'http://neilsloane.com/ICOSP/icover.3.912.6.5.txt'
    file = 'icover.3.912.6.5.txt'
    snap = hub.read_spherical_packings_www_from_file(file)
-   sq_file = 'icover.3.912.6.5.txt.sq'           
+   sq_file = 'icover.3.912.6.5.txt.sq' 
+elif mode==14:
+   snap = hub.make_random_spherical_shell (32.1451, 1000)
+   sq_file ='random_spherical_shell_32.14_1000.sq'           
 else:
    print "Error"       
 
