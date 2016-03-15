@@ -264,7 +264,7 @@ elif mode == 24 :
     box = snap['box']
     step = snap['step']
     N_mol = snap['N']/16*2
-    N_hub = N_mol/3
+    N_hub = N_mol/6
     xm = np.zeros((N_hub,3))
     cnt = 0 
     for i in range(N_hub):  
