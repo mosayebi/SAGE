@@ -277,7 +277,7 @@ elif mode == 24 :
             cnt += 1
         COM = [sum(p)/len(p) for p in zip(*xx)]   
         xm [i,:] = COM 
-        print i,cnt, p_type[cnt]
+        print '****', i,cnt, p_type[cnt], xm[i,:]
     snap['coords'] = xm
     snap['N'] = N_hub
     sq_file = 'model53pure_dump_0.50.lammpstrj_hubpositions.sq.03'   
