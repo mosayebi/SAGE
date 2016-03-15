@@ -265,7 +265,7 @@ elif mode == 24 :
     step = snap['step']
     N_mol = snap['N']/16*2
     N_hub = N_mol/6
-    print N_mol, N_hub
+    print "Nmol=%s , N_hub=%s"%(N_mol, N_hub)
     xm = np.zeros((N_hub,3))
     cnt = 0 
     for i in range(N_hub):  
@@ -273,7 +273,7 @@ elif mode == 24 :
         for p in range(3):
             while not p_type[cnt] == 14:
                 cnt += 1
-            print cnt, i, p, p_type[cnt]
+            #print cnt, i, p, p_type[cnt]
             xx.append(x[cnt,:]) 
             cnt += 1
         COM = [sum(p)/len(p) for p in zip(*xx)]   
@@ -292,7 +292,8 @@ elif mode == 25 :
     box = snap['box']
     step = snap['step']
     N_mol = snap['N']/16*2
-    N_hub = N_mol/3
+    N_hub = N_mol/6
+    print "Nmol=%s , N_hub=%s"%(N_mol, N_hub)
     xm = np.zeros((N_hub,3))
     cnt = 0 
     for i in range(N_hub):  
@@ -300,6 +301,7 @@ elif mode == 25 :
         for p in range(3):
             while not p_type[cnt] == 14:
                 cnt += 1
+            #print cnt, i, p, p_type[cnt]
             xx.append(x[cnt,:]) 
             cnt += 1
         COM = [sum(p)/len(p) for p in zip(*xx)]   
@@ -319,7 +321,8 @@ elif mode == 26 :
     box = snap['box']
     step = snap['step']
     N_mol = snap['N']/16*2
-    N_hub = N_mol/3
+    N_hub = N_mol/6
+    print "Nmol=%s , N_hub=%s"%(N_mol, N_hub)
     xm = np.zeros((N_hub,3))
     cnt = 0 
     for i in range(N_hub):  
@@ -327,6 +330,7 @@ elif mode == 26 :
         for p in range(3):
             while not p_type[cnt] == 14:
                 cnt += 1
+            #print cnt, i, p, p_type[cnt]
             xx.append(x[cnt,:]) 
             cnt += 1
         COM = [sum(p)/len(p) for p in zip(*xx)]   
@@ -345,7 +349,8 @@ elif mode == 27 :
     box = snap['box']
     step = snap['step']
     N_mol = snap['N']/16*2
-    N_hub = N_mol/3
+    N_hub = N_mol/6
+    print "Nmol=%s , N_hub=%s"%(N_mol, N_hub)
     xm = np.zeros((N_hub,3))
     cnt = 0 
     for i in range(N_hub):  
@@ -353,6 +358,7 @@ elif mode == 27 :
         for p in range(3):
             while not p_type[cnt] == 14:
                 cnt += 1
+            #print cnt, i, p, p_type[cnt]
             xx.append(x[cnt,:]) 
             cnt += 1
         COM = [sum(p)/len(p) for p in zip(*xx)]   
