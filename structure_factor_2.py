@@ -142,6 +142,34 @@ elif mode==13:
 elif mode==14:
    snap = hub.make_random_spherical_shell (32.1451, 1000)
    sq_file ='random_spherical_shell_32.14_1000.sq'           
+elif mode==15:
+   snap = hub.read_sesh_SAGE(traj_file)
+   x = snap ['coords']
+   xt1 = np.zeros(x.shape)
+   Translate = np.array([1000, 0, 0])
+   for i in range(len(x)):
+       xt1[i,:] = x[i,:] + Translate 
+   xt2 = np.zeros(x.shape)
+   Translate = np.array([0, 1500, 0])
+   for i in range(len(x)):
+       xt2[i,:] = x[i,:] + Translate 
+   xt3 = np.zeros(x.shape)
+   Translate = np.array([0, 0, 2800])
+   for i in range(len(x)):
+       xt3[i,:] = x[i,:] + Translate             
+   xm = np.concatenate((x, xt1, xt2, xt3), axis=0)
+   snap = {}
+   snap ['coords'] = xm
+   snap ['N'] = len(xm)
+   snap ['step'] = '4_sesh_SAGE'
+   snap ['traj'] =  traj_file
+   snap['box'] = np.array ( [10*np.max(xm), 10*np.max(xm), 10*np.max(xm)] )
+   sq_file = '4_'+traj_file+'.sq'
+
+elif mode==16:
+   snap = hub.make_random_spherical_shell (32.1451, 1860)
+   sq_file ='random_spherical_shell_32.14_1860.sq' 
+
 else:
    print "Error"       
 
