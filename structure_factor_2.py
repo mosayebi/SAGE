@@ -272,12 +272,11 @@ elif mode == 24 :
         for p in range(3):
             while not p_type[cnt] == 11:
                 cnt += 1
-                print cnt, p_type[cnt]
+            print cnt, i, p, p_type[cnt]
             xx.append(x[cnt,:]) 
-            #cnt += 1
+            cnt += 1
         COM = [sum(p)/len(p) for p in zip(*xx)]   
         xm [i,:] = COM 
-        print '****', i,cnt, p_type[cnt], xm[i,:]
     snap['coords'] = xm
     snap['N'] = N_hub
     sq_file = 'model53pure_dump_0.50.lammpstrj_hubpositions.sq.03'   
