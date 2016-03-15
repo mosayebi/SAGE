@@ -271,7 +271,7 @@ elif mode == 24 :
     for i in range(N_hub):  
         xx = [] 
         for p in range(3):
-            while not p_type[cnt] == 11:
+            while not p_type[cnt] == 14:
                 cnt += 1
             print cnt, i, p, p_type[cnt]
             xx.append(x[cnt,:]) 
