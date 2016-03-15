@@ -123,7 +123,22 @@ elif mode==10:
    url = 'http://neilsloane.com/ICOSP/icover.3.312.5.1.txt'
    file = 'icover.3.312.5.1.txt'
    snap = hub.read_spherical_packings_www_from_file(file)
-   sq_file = 'icover.3.312.5.1.txt.sq'    
+   sq_file = 'icover.3.312.5.1.txt.sq'
+elif mode==11:
+   url = 'http://neilsloane.com/ICOSP/icover.3.192.3.2.txt'
+   file = 'iicover.3.192.3.2.txt'
+   snap = hub.read_spherical_packings_www_from_file(file)
+   sq_file = 'icover.3.192.3.2.txt.sq' 
+elif mode==12:
+   url = 'http://neilsloane.com/ICOSP/icover.3.192.3.2.txt'
+   file = 'icover.3.192.3.2.txt'
+   snap = hub.read_spherical_packings_www_from_file(file)
+   sq_file = 'icover.3.192.3.2.txt.sq'  
+elif mode==13:
+   url = 'http://neilsloane.com/ICOSP/icover.3.912.6.5.txt'
+   file = 'icover.3.912.6.5.txt'
+   snap = hub.read_spherical_packings_www_from_file(file)
+   sq_file = 'icover.3.912.6.5.txt.sq'           
 else:
    print "Error"       
 
