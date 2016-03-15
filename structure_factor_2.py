@@ -193,6 +193,7 @@ elif mode == 19 :
     file='/projects/t3/mm15804/SAGE/model_5.3/hub_assembly/dump_0.50.lammpstrj'
     traj_data = hub.read_dump(file, 1, 1e10)
     snap = traj_data[-1]
+    N_mol = snap['N']/16 * 2
     x = snap ['coords']
     xm =  np.zeros((N_mol,3))
     for i in range(N_mol):
@@ -205,6 +206,7 @@ elif mode == 20 :
     file='/projects/t3/mm15804/SAGE/model_5.3/pure_hubs_assembly/dump_0.50.lammpstrj'
     traj_data = hub.read_dump(file, 1, 1e10)
     snap = traj_data[-1]
+    N_mol = snap['N']/16 * 2
     x = snap ['coords']
     xm =  np.zeros((N_mol,3))
     for i in range(N_mol):
@@ -217,6 +219,7 @@ elif mode == 21 :
     file='/projects/t3/mm15804/SAGE/model_5.4/pure_hubs_assembly/dump_0.50.lammpstrj'
     traj_data = hub.read_dump(file, 1, 1e10)
     snap = traj_data[-1]
+    N_mol = snap['N']/16 * 2
     x = snap ['coords']
     xm =  np.zeros((N_mol,3))
     for i in range(N_mol):
@@ -229,6 +232,7 @@ elif mode == 22 :
     file='/projects/t3/mm15804/SAGE/model_5.1/pure_hubs_assembly/dump_0.75.lammpstrj'
     traj_data = hub.read_dump(file, 1, 1e10)
     snap = traj_data[-1]
+    N_mol = snap['N']/16 * 2
     x = snap ['coords']
     xm =  np.zeros((N_mol,3))
     for i in range(N_mol):
@@ -241,6 +245,7 @@ elif mode == 23 :
     file='/projects/t3/mm15804/SAGE/model_5.3/hub_assembly/dump_1.50.lammpstrj'
     traj_data = hub.read_dump(file, 1, 1e10)
     snap = traj_data[-20]
+    N_mol = snap['N']/16 * 2
     x = snap ['coords']
     xm =  np.zeros((N_mol,3))
     for i in range(N_mol):
