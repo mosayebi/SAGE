@@ -180,37 +180,179 @@ elif mode == 18 :
     file='/projects/t3/mm15804/SAGE/model_5.3/hub_assembly/dump_1.50.lammpstrj'
     traj_data = hub.read_dump(file, 1, 1e10)
     snap = traj_data[-1]
+    N_mol = snap['N']/16 * 2
+    x = snap ['coords']
+    xm =  np.zeros((N_mol,3))
+    for i in range(N_mol):
+        xm [i,:] = x [ hub.get_helix_COM_atom_id(i), :]
+    snap['coords'] = xm
+    snap['N'] = N_mol     
     sq_file = 'model53hub_dump_1.50.lammpstrj.sq.03'
 
 elif mode == 19 :
     file='/projects/t3/mm15804/SAGE/model_5.3/hub_assembly/dump_0.50.lammpstrj'
     traj_data = hub.read_dump(file, 1, 1e10)
     snap = traj_data[-1]
+    x = snap ['coords']
+    xm =  np.zeros((N_mol,3))
+    for i in range(N_mol):
+        xm [i,:] = x [ hub.get_helix_COM_atom_id(i), :]
+    snap['coords'] = xm
+    snap['N'] = N_mol  
     sq_file = 'model53hub_dump_0.50.lammpstrj.sq.03'    
 
 elif mode == 20 :
     file='/projects/t3/mm15804/SAGE/model_5.3/pure_hubs_assembly/dump_0.50.lammpstrj'
     traj_data = hub.read_dump(file, 1, 1e10)
     snap = traj_data[-1]
+    x = snap ['coords']
+    xm =  np.zeros((N_mol,3))
+    for i in range(N_mol):
+        xm [i,:] = x [ hub.get_helix_COM_atom_id(i), :]
+    snap['coords'] = xm
+    snap['N'] = N_mol   
     sq_file = 'model53pure_dump_0.50.lammpstrj.sq.03'   
 
 elif mode == 21 :
     file='/projects/t3/mm15804/SAGE/model_5.4/pure_hubs_assembly/dump_0.50.lammpstrj'
     traj_data = hub.read_dump(file, 1, 1e10)
     snap = traj_data[-1]
+    x = snap ['coords']
+    xm =  np.zeros((N_mol,3))
+    for i in range(N_mol):
+        xm [i,:] = x [ hub.get_helix_COM_atom_id(i), :]
+    snap['coords'] = xm
+    snap['N'] = N_mol   
     sq_file = 'model54pure_dump_0.50.lammpstrj.sq.03'   
 
 elif mode == 22 :
     file='/projects/t3/mm15804/SAGE/model_5.1/pure_hubs_assembly/dump_0.75.lammpstrj'
     traj_data = hub.read_dump(file, 1, 1e10)
     snap = traj_data[-1]
+    x = snap ['coords']
+    xm =  np.zeros((N_mol,3))
+    for i in range(N_mol):
+        xm [i,:] = x [ hub.get_helix_COM_atom_id(i), :]
+    snap['coords'] = xm
+    snap['N'] = N_mol  
     sq_file = 'model51pure_dump_0.75.lammpstrj.sq.03' 
 
 elif mode == 23 :
     file='/projects/t3/mm15804/SAGE/model_5.3/hub_assembly/dump_1.50.lammpstrj'
     traj_data = hub.read_dump(file, 1, 1e10)
     snap = traj_data[-20]
+    x = snap ['coords']
+    xm =  np.zeros((N_mol,3))
+    for i in range(N_mol):
+        xm [i,:] = x [ hub.get_helix_COM_atom_id(i), :]
+    snap['coords'] = xm
+    snap['N'] = N_mol  
     sq_file = 'model53hub_dump_1.50.lammpstrj.sq.04'
+
+
+elif mode == 24 :
+    file='/projects/t3/mm15804/SAGE/model_5.3/pure_hubs_assembly/dump_0.50.lammpstrj'
+    traj_data = hub.read_dump(file, 1, 1e10)
+    snap = traj_data[-1]
+    x = snap['coords']
+    p_type = snap['p_type']
+    box = snap['box']
+    step = snap['step']
+    N_mol = snap['N']/16*2
+    N_hub = N_mol/3
+    xm = np.zeros((N_hub,3))
+    cnt = 0 
+    for i in range(N_hub):  
+        xx = [] 
+        for p in range(3):
+            while not p_type[cnt] == 14:
+                cnt += 1
+            xx.append(x[cnt,:]) 
+            cnt += 1
+        COM = [sum(p)/len(p) for p in zip(*xx)]   
+        xm [i,:] = COM 
+    snap['coords'] = xm
+    snap['N'] = N_hub
+    sq_file = 'model53pure_dump_0.50.lammpstrj_hubpositions.sq.03'   
+
+
+elif mode == 25 :
+    file='/projects/t3/mm15804/SAGE/model_5.1/pure_hubs_assembly/dump_0.50.lammpstrj'
+    traj_data = hub.read_dump(file, 1, 1e10)
+    snap = traj_data[-1]
+    x = snap['coords']
+    p_type = snap['p_type']
+    box = snap['box']
+    step = snap['step']
+    N_mol = snap['N']/16*2
+    N_hub = N_mol/3
+    xm = np.zeros((N_hub,3))
+    cnt = 0 
+    for i in range(N_hub):  
+        xx = [] 
+        for p in range(3):
+            while not p_type[cnt] == 14:
+                cnt += 1
+            xx.append(x[cnt,:]) 
+            cnt += 1
+        COM = [sum(p)/len(p) for p in zip(*xx)]   
+        xm [i,:] = COM 
+    snap['coords'] = xm
+    snap['N'] = N_hub
+    sq_file = 'model51pure_dump_0.50.lammpstrj_hubpositions.sq.03'  
+
+
+
+elif mode == 26 :
+    file='/projects/t3/mm15804/SAGE/model_5.1/hub_assembly/dump_0.50.lammpstrj'
+    traj_data = hub.read_dump(file, 1, 1e10)
+    snap = traj_data[-1]
+    x = snap['coords']
+    p_type = snap['p_type']
+    box = snap['box']
+    step = snap['step']
+    N_mol = snap['N']/16*2
+    N_hub = N_mol/3
+    xm = np.zeros((N_hub,3))
+    cnt = 0 
+    for i in range(N_hub):  
+        xx = [] 
+        for p in range(3):
+            while not p_type[cnt] == 14:
+                cnt += 1
+            xx.append(x[cnt,:]) 
+            cnt += 1
+        COM = [sum(p)/len(p) for p in zip(*xx)]   
+        xm [i,:] = COM 
+    snap['coords'] = xm
+    snap['N'] = N_hub
+    sq_file = 'model51hub_dump_0.50.lammpstrj_hubpositions.sq.03' 
+
+
+elif mode == 27 :
+    file='/projects/t3/mm15804/SAGE/model_5.3/hub_assembly/dump_1.50.lammpstrj'
+    traj_data = hub.read_dump(file, 1, 1e10)
+    snap = traj_data[-1]
+    x = snap['coords']
+    p_type = snap['p_type']
+    box = snap['box']
+    step = snap['step']
+    N_mol = snap['N']/16*2
+    N_hub = N_mol/3
+    xm = np.zeros((N_hub,3))
+    cnt = 0 
+    for i in range(N_hub):  
+        xx = [] 
+        for p in range(3):
+            while not p_type[cnt] == 14:
+                cnt += 1
+            xx.append(x[cnt,:]) 
+            cnt += 1
+        COM = [sum(p)/len(p) for p in zip(*xx)]   
+        xm [i,:] = COM 
+    snap['coords'] = xm
+    snap['N'] = N_hub
+    sq_file = 'model53hub_dump_1.50.lammpstrj_hubpositions.sq.03'  
 
 else:
    print "Error"       
