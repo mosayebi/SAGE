@@ -57,7 +57,7 @@ def get_structure_factor_q(snap, qmod):
     xm = snap['coords']
     N_mol = snap['N']
 
-    Ndir = 20
+    Ndir = 30
     sum_sq = 0.0
     for idir in range(Ndir):
         q = np.array(random_unit_vector()) * qmod
@@ -123,8 +123,8 @@ if __name__ == "__main__":
     start = time.time()
 
     qmin = 0.01
-    qmax = 5
-    Nq   = 200
+    qmax = 7
+    Nq   = 500
     dq   = (qmax-qmin)/(Nq-1) 
 
     futures=[]
