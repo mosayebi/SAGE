@@ -449,6 +449,118 @@ elif mode == 30 :
     snap['N'] = N_hub
     sq_file = 'model53pure_dump_1.00.lammpstrj_hubpositions.sq.03'      
 
+
+elif mode == 31 :
+    file='/projects/t3/mm15804/SAGE/model_4.6/hub_assembly/dump2_0.75.lammpstrj'
+    traj_data = hub.read_dump(file, 1, 1e10)
+    traj_data = traj_data[-2:]
+    snap = traj_data[-1]
+    x = snap['coords']
+    p_type = snap['p_type']
+    box = snap['box']
+    step = snap['step']
+    N_mol = snap['N']/16*2
+    N_hub = N_mol/6
+    print "Nmol=%s , N_hub=%s"%(N_mol, N_hub)
+    xm = np.zeros((N_hub,3))
+    cnt = 0 
+    for i in range(N_hub):  
+        xx = [] 
+        for p in range(3):
+            while not p_type[cnt] == 14:
+                cnt += 1
+            #print cnt, i, p, p_type[cnt]
+            xx.append(x[cnt,:]) 
+            cnt += 1
+        COM = [sum(p)/len(p) for p in zip(*xx)]   
+        xm [i,:] = COM 
+    snap['coords'] = xm
+    snap['N'] = N_hub
+    sq_file = 'model46hub_dump_0.75.lammpstrj_hubpositions.sq.03'      
+
+elif mode == 32 :
+    file='/projects/t3/mm15804/SAGE/model_4.6/hub_assembly/dump2_0.50.lammpstrj'
+    traj_data = hub.read_dump(file, 1, 1e10)
+    traj_data = traj_data[-2:]
+    snap = traj_data[-1]
+    x = snap['coords']
+    p_type = snap['p_type']
+    box = snap['box']
+    step = snap['step']
+    N_mol = snap['N']/16*2
+    N_hub = N_mol/6
+    print "Nmol=%s , N_hub=%s"%(N_mol, N_hub)
+    xm = np.zeros((N_hub,3))
+    cnt = 0 
+    for i in range(N_hub):  
+        xx = [] 
+        for p in range(3):
+            while not p_type[cnt] == 14:
+                cnt += 1
+            #print cnt, i, p, p_type[cnt]
+            xx.append(x[cnt,:]) 
+            cnt += 1
+        COM = [sum(p)/len(p) for p in zip(*xx)]   
+        xm [i,:] = COM 
+    snap['coords'] = xm
+    snap['N'] = N_hub
+    sq_file = 'model46hub_dump_0.50.lammpstrj_hubpositions.sq.03'
+
+elif mode == 33 :
+    file='/projects/t3/mm15804/SAGE/model_4.6/hub_assembly/dump2_2.00.lammpstrj'
+    traj_data = hub.read_dump(file, 1, 1e10)
+    traj_data = traj_data[-2:]
+    snap = traj_data[-1]
+    x = snap['coords']
+    p_type = snap['p_type']
+    box = snap['box']
+    step = snap['step']
+    N_mol = snap['N']/16*2
+    N_hub = N_mol/6
+    print "Nmol=%s , N_hub=%s"%(N_mol, N_hub)
+    xm = np.zeros((N_hub,3))
+    cnt = 0 
+    for i in range(N_hub):  
+        xx = [] 
+        for p in range(3):
+            while not p_type[cnt] == 14:
+                cnt += 1
+            #print cnt, i, p, p_type[cnt]
+            xx.append(x[cnt,:]) 
+            cnt += 1
+        COM = [sum(p)/len(p) for p in zip(*xx)]   
+        xm [i,:] = COM 
+    snap['coords'] = xm
+    snap['N'] = N_hub
+    sq_file = 'model46hub_dump_2.00.lammpstrj_hubpositions.sq.03'
+
+elif mode == 34 :
+    file='/projects/t3/mm15804/SAGE/model_4.6/hub_assembly/dump2_1.00.lammpstrj'
+    traj_data = hub.read_dump(file, 1, 1e10)
+    traj_data = traj_data[-2:]
+    snap = traj_data[-1]
+    x = snap['coords']
+    p_type = snap['p_type']
+    box = snap['box']
+    step = snap['step']
+    N_mol = snap['N']/16*2
+    N_hub = N_mol/6
+    print "Nmol=%s , N_hub=%s"%(N_mol, N_hub)
+    xm = np.zeros((N_hub,3))
+    cnt = 0 
+    for i in range(N_hub):  
+        xx = [] 
+        for p in range(3):
+            while not p_type[cnt] == 14:
+                cnt += 1
+            #print cnt, i, p, p_type[cnt]
+            xx.append(x[cnt,:]) 
+            cnt += 1
+        COM = [sum(p)/len(p) for p in zip(*xx)]   
+        xm [i,:] = COM 
+    snap['coords'] = xm
+    snap['N'] = N_hub
+    sq_file = 'model46hub_dump_1.00.lammpstrj_hubpositions.sq.03'
 else:
    print "Error"       
 
