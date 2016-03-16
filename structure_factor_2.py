@@ -868,7 +868,7 @@ elif mode == 44 :
 
 elif mode == 45 :
     file='/projects/t3/mm15804/SAGE/model_4.5/hub_assembly/dump2_2.00.lammpstrj'
-    traj_data = hub.read_dump(file, 1, 1e10)
+    traj_data = hub.read_dump(file, 1, 411000000)
     traj_data = traj_data[-2:]
     snap = traj_data[-1]
     x = snap['coords']
@@ -892,7 +892,7 @@ elif mode == 45 :
         xm [i,:] = COM 
     snap['coords'] = xm
     snap['N'] = N_hub
-    sq_file = 'model46hub_dump_2.00.lammpstrj_hubpositions.sq.03.test'
+    sq_file = 'model45hub_dump_2.00.lammpstrj_hubpositions.sq.03.test'
 else:
    print "Error"       
 
