@@ -88,7 +88,7 @@ if __name__ == "__main__":
 
     if len(phi_hh)> 0 :	
         filename  =  traj_file+'.hubhub_dihedrals_hist_lim.pdf'         
-        hub.plot_hist(phi_hh, theta1_hh, theta2_hh, filename, x_lim=[-30,30] ) 
+        hub.plot_hist(phi_hh, theta1_hh, theta2_hh, filename, x_lim=[-60,60] ) 
         #print phi, theta1, theta2
         #plot_scatter_hist(phi, theta1)
         #plot_scatter_hist_sns(phi, theta1)
@@ -97,7 +97,7 @@ if __name__ == "__main__":
     
     if len(phi_mm)> 0 :	
         filename  =  traj_file+'.molmol_dihedrals_hist_lim.pdf'         
-        hub.plot_hist(phi_mm, theta1_mm, theta2_mm, filename, x_lim=[-30,30] ) 
+        hub.plot_hist(phi_mm, theta1_mm, theta2_mm, filename, x_lim=[-60,60] ) 
         #print phi, theta1, theta2
         #plot_scatter_hist(phi, theta1)
         #plot_scatter_hist_sns(phi, theta1)
@@ -109,8 +109,8 @@ if __name__ == "__main__":
 
     # plot atomistic dihedrals
     atom_phi, atom_theta1, atom_theta2 = hub.read_atomistic_angles('/home/mm15804/SAGE/data/hub-hub_angles.his')
-    hub.plot_hist(atom_phi, atom_theta1, atom_theta2, filename='atomistic_hubhub_dihedrals_hist_lim.pdf', x_lim=[-30,30])
+    hub.plot_hist(atom_phi, atom_theta1, atom_theta2, filename='atomistic_hubhub_dihedrals_hist_lim.pdf', x_lim=[-60,60])
 
     atom_phi, atom_theta1, atom_theta2 = hub.read_atomistic_angles('/home/mm15804/SAGE/data/hub-dimer_angles.his')
-    hub.plot_hist(atom_phi, atom_theta1, atom_theta2, filename='atomistic_molmol_dihedrals_hist_lim.pdf', x_lim=[-30, 30])
+    hub.plot_hist(atom_phi, atom_theta1, atom_theta2, filename='atomistic_molmol_dihedrals_hist_lim.pdf', x_lim=[-60, 60])
 
