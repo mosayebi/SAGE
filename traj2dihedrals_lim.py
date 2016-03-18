@@ -108,8 +108,8 @@ if __name__ == "__main__":
 
 
     # plot atomistic dihedrals
-    atom_phi, atom_theta1, atom_theta2 = hub.read_atomistic_angles('/home/mm15804/SAGE/data/hub-hub_angles_lim.his')
-    hub.plot_hist(atom_phi, atom_theta1, atom_theta2, filename='atomistic_hubhub_dihedrals_hist.pdf', x_lim=[-30,30])
+    atom_phi, atom_theta1, atom_theta2 = hub.read_atomistic_angles('/home/mm15804/SAGE/data/hub-hub_angles.his')
+    hub.plot_hist(atom_phi, atom_theta1, atom_theta2, filename='atomistic_hubhub_dihedrals_hist_lim.pdf', x_lim=[-30,30])
 
     atom_phi, atom_theta1, atom_theta2 = hub.read_atomistic_angles('/home/mm15804/SAGE/data/hub-dimer_angles.his')
     hub.plot_hist(atom_phi, atom_theta1, atom_theta2, filename='atomistic_molmol_dihedrals_hist_lim.pdf', x_lim=[-30, 30])

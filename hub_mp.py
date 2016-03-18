@@ -1109,7 +1109,7 @@ def plot_hist(x,y,z, filename, x_lim):
     #plt.grid(True)
     #plt.show() 
     with PdfPages(filename) as pdf:
-         pdf.savefig()
+         pdf.savefig(transparent=True)
     plt.close()   
     print "angel histograms are saved in %s" % filename     
 
@@ -1142,7 +1142,7 @@ def plot_1D_hist(x, filename='hist.pdf'):
     #plt.grid(True)
     #plt.show() 
     with PdfPages(filename) as pdf:
-         pdf.savefig()
+         pdf.savefig(transparent=True)
     plt.close()   
     print "histogram saved in %s" % filename    
 
@@ -1174,7 +1174,7 @@ def plot_1D_hist_noX(x, filename='hist.png'):
     #plt.grid(True)
     #plt.show() 
     # with PdfPages(filename) as pdf:
-    #      pdf.savefig()
+    #      pdf.savefig(transparent=True)
     # plt.close()   
     # print "histogram saved in %s" % filename  
     fig = plt.figure()
@@ -1246,7 +1246,7 @@ def plot_scatter_hist(x,y):
         label.set_visible(False)
 
     with PdfPages('plot2.pdf') as pdf:
-         pdf.savefig()
+         pdf.savefig(transparent=True)
     plt.close() 
 
 
@@ -1261,7 +1261,7 @@ def plot_op_vs_time (time, op):
     #plt.grid(True)
     #plt.show() 
     with PdfPages('plot3.pdf') as pdf:
-         pdf.savefig()
+         pdf.savefig(transparent=True)
     plt.close()        
 
 def plot_scatter_hist_sns(x, y):
@@ -1278,7 +1278,7 @@ def plot_scatter_hist_sns(x, y):
     sns.set(style="ticks")
     sns.jointplot(np.array(x), np.array(y), kind="hex", size=4, stat_func=None).set_axis_labels("$\phi$", "$\\theta$")
     with PdfPages('plot4.pdf') as pdf:
-         pdf.savefig()
+         pdf.savefig(transparent=True)
     sns.plt.close() 
               
 
@@ -1330,7 +1330,7 @@ def analyse_cluster_log(plotfile, logfile='log_rerun_0.75'):
     #plt.grid(True)
     #plt.show() 
     with PdfPages(plotfile+'_cluster_size.pdf') as pdf:
-         pdf.savefig()
+         pdf.savefig(transparent=True)
     plt.close()
     print 'cluster info plotted in %s' % plotfile+'_cluster_size.pdf'  
 
@@ -1369,7 +1369,7 @@ def analyse_log(plotfile, logfile='log_0.75'):
     plt.xlabel('time [MD step]')
     plt.ylabel('temperature [s.u.]')  
     with PdfPages(plotfile+'_temp.pdf') as pdf:
-         pdf.savefig()
+         pdf.savefig(transparent=True)
     plt.close()
     print 'cluster info plotted in %s' % plotfile+'_temp.pdf' 
 
@@ -1377,7 +1377,7 @@ def analyse_log(plotfile, logfile='log_0.75'):
     plt.xlabel('time [MD step]')
     plt.ylabel('pair energy [s.u.]')  
     with PdfPages(plotfile+'_Epair.pdf') as pdf:
-         pdf.savefig()
+         pdf.savefig(transparent=True)
     plt.close()
     print 'cluster info plotted in %s' % plotfile+'_Epair.pdf' 
 
@@ -1469,7 +1469,7 @@ def plot_core_shell_form_factor():
     #plt.grid(True)
     #plt.show() 
     with PdfPages('core_shell_form_factor.pdf') as pdf:
-         pdf.savefig()
+         pdf.savefig(transparent=True)
     plt.close()  
 
     file =open('core_shell_form_factor.txt', 'w')
