@@ -1073,8 +1073,8 @@ if __name__ == "__main__":
     start = time.time()
 
     qmin = 0.01
-    qmax = 0.3
-    Nq   = 20
+    qmax = 7
+    Nq   = 1000
     dq   = (qmax-qmin)/(Nq-1) 
 
     futures=[]
