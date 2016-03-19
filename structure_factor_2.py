@@ -69,7 +69,7 @@ def get_structure_factor_q(snap, qmod, get_rij_flag=False):
         f = open(filename, 'w')
         f.write("#%s, %s"%(snap['traj'], step))
         for i in range(len(rij)):
-            print "%s"% rij[i] 
+            f.write( "%s"% rij[i] ) 
         print("rij vector is written to %s")%filename
     return sum_sq/Ndir
 
