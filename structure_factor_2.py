@@ -37,7 +37,7 @@ def get_structure_factor_qv(xm, N_mol, box, qv, get_rij_flag=False):
         # sq += 2*np.cos( np.dot(dr,qv) )
     
     drs = map(lambda x: hub.PBC(x, box), drs)
-    rij  =  np.sqrt( np.sum( np.multiply(drs,drs), axis=1))
+    if get_rij_flag : rij  =  np.sqrt( np.sum( np.multiply(drs,drs), axis=1))
     sqs = map(lambda x: 2*np.cos(np.dot(x,qv)), drs)
     sq  += np.sum(sqs) / N_mol
     return sq, rij  
