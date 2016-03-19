@@ -58,7 +58,7 @@ def get_structure_factor_q(snap, qmod, get_rij_flag=False):
         q = np.array(random_unit_vector()) * qmod
         if idir == 0 :
             sq, rij = get_structure_factor_qv(xm, N_mol, box, q, get_rij_flag) 
-        else
+        else:
             sq, rij = get_structure_factor_qv(xm, N_mol, box, q, False)     
         sum_sq += sq        
     end = time.time()
