@@ -23,10 +23,11 @@ def random_unit_vector():
     return (x,y,z)
 
 
-def get_structure_factor_qv(xm, N_mol, box, qv):
+def get_structure_factor_qv(xm, N_mol, box, qv, get_rij_flag=False):
     #q = np.array(random_unit_vector()) * qmod
     sq = 0
     drs = []
+    rij = []
     for mol1_id in range(N_mol):
       for mol2_id in range(mol1_id+1, N_mol):
         if (mol1_id >= mol2_id): continue 
@@ -36,12 +37,13 @@ def get_structure_factor_qv(xm, N_mol, box, qv):
         # sq += 2*np.cos( np.dot(dr,qv) )
     
     drs = map(lambda x: hub.PBC(x, box), drs)
+    rij  =  np.sqrt( np.sum( np.multiply(drs,drs), axis=1))
     sqs = map(lambda x: 2*np.cos(np.dot(x,qv)), drs)
     sq  += np.sum(sqs) / N_mol
-    return sq  
+    return sq, rij  
 
 
-def get_structure_factor_q(snap, qmod):
+def get_structure_factor_q(snap, qmod, get_rij_flag=False):
     np.random.seed()
 
     start = time.time()
@@ -54,10 +56,21 @@ def get_structure_factor_q(snap, qmod):
     sum_sq = 0.0
     for idir in range(Ndir):
         q = np.array(random_unit_vector()) * qmod
-        sum_sq += get_structure_factor_qv(xm, N_mol, box, q)        
+        if idir == 0 :
+            sq, rij = get_structure_factor_qv(xm, N_mol, box, q, get_rij_flag) 
+        else
+            sq, rij = get_structure_factor_qv(xm, N_mol, box, q, False)     
+        sum_sq += sq        
     end = time.time()
     print("[trajectory timestep %s]: averaging s(q) for q = %s over %d directions for %d molec. took %s (s). {process %s}" \
         % (step, qmod, Ndir, N_mol, end-start, current_process().pid))
+    if get_rij_flag :
+        filename = 'rij_%s'%step
+        f = open(filename, 'w')
+        f.write(snap['traj'])
+        for i in range(len(rij)):
+            print "%s"% rij[i] 
+        print("rij vector is written to %s") filename
     return sum_sq/Ndir
 
 
@@ -1209,6 +1222,60 @@ elif mode == 57 :
     snap['N'] = N_hub
     sq_file = 'model53pure_dump_0.50.lammpstrj_hubpositions.sq.07'  
 
+elif mode == 58 :
+    file='/projects/t3/mm15804/SAGE/model_5.3/hub_assembly/dump_0.50.lammpstrj'
+    traj_data = hub.read_dump(file, 1, 1e10)
+    snap = traj_data[-1]
+    x = snap['coords']
+    p_type = snap['p_type']
+    box = snap['box']
+    step = snap['step']
+    N_mol = snap['N']/16*2
+    N_hub = N_mol/6
+    print "Nmol=%s , N_hub=%s"%(N_mol, N_hub)
+    xm = np.zeros((N_hub,3))
+    cnt = 0 
+    for i in range(N_hub):  
+        xx = [] 
+        for p in range(3):
+            while not p_type[cnt] == 14:
+                cnt += 1
+            #print cnt, i, p, p_type[cnt]
+            xx.append(x[cnt,:]) 
+            cnt += 1
+        COM = [sum(p)/len(p) for p in zip(*xx)]   
+        xm [i,:] = COM 
+    snap['coords'] = xm
+    snap['N'] = N_hub
+    sq_file = 'model53hub_dump_0.50.lammpstrj_hubpositions.sq.07'  
+elif mode == 59 :
+    file='/projects/t3/mm15804/SAGE/model_5.3/pure_hubs_assembly/dump_0.50.lammpstrj'
+    traj_data = hub.read_dump(file, 1, 1e10)
+    snap = traj_data[-1]
+    x = snap['coords']
+    p_type = snap['p_type']
+    box = snap['box']
+    step = snap['step']
+    N_mol = snap['N']/16*2
+    N_hub = N_mol/6
+    print "Nmol=%s , N_hub=%s"%(N_mol, N_hub)
+    xm = np.zeros((N_hub,3))
+    cnt = 0 
+    for i in range(N_hub):  
+        xx = [] 
+        for p in range(3):
+            while not p_type[cnt] == 14:
+                cnt += 1
+            #print cnt, i, p, p_type[cnt]
+            xx.append(x[cnt,:]) 
+            cnt += 1
+        COM = [sum(p)/len(p) for p in zip(*xx)]   
+        xm [i,:] = COM 
+    snap['coords'] = xm
+    snap['N'] = N_hub
+    sq_file = 'model53pure_dump_0.50.lammpstrj_hubpositions.sq.07'  
+
+
 else:
    print "Error"       
 
@@ -1243,7 +1310,11 @@ if __name__ == "__main__":
             for iq in range(Nq):
                 qmod = qmin + iq*dq
                 for replica in range(15):   
-                    futures.append( pool.apply_async( get_structure_factor_q, [snap, qmod] ) )
+                    if replica==0 and iq==0 : 
+                        get_rij_flag = True
+                    else:
+                        get_rij_flag = False
+                    futures.append( pool.apply_async( get_structure_factor_q, [snap, qmod, get_rij_flag] ) )
                     q.append(qmod)
 
 
