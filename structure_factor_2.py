@@ -1247,7 +1247,7 @@ elif mode == 58 :
         xm [i,:] = COM 
     snap['coords'] = xm
     snap['N'] = N_hub
-    sq_file = 'model53hub_dump_0.50.lammpstrj_hubpositions.sq.07'  
+    sq_file = 'model53hub_dump_0.50.lammpstrj_hubpositions.sq.08'  
 elif mode == 59 :
     file='/projects/t3/mm15804/SAGE/model_5.3/pure_hubs_assembly/dump_0.50.lammpstrj'
     traj_data = hub.read_dump(file, 1, 1e10)
@@ -1273,7 +1273,7 @@ elif mode == 59 :
         xm [i,:] = COM 
     snap['coords'] = xm
     snap['N'] = N_hub
-    sq_file = 'model53pure_dump_0.50.lammpstrj_hubpositions.sq.07'  
+    sq_file = 'model53pure_dump_0.50.lammpstrj_hubpositions.sq.08'  
 
 
 else:
