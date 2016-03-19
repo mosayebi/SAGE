@@ -59,7 +59,7 @@ def get_structure_factor_q(snap, qmod, get_rij_flag=False):
         if idir == 0 :
             sq, rij = get_structure_factor_qv(xm, N_mol, box, q, get_rij_flag) 
         else:
-            sq, rij = get_structure_factor_qv(xm, N_mol, box, q, False)     
+            sq, dumm = get_structure_factor_qv(xm, N_mol, box, q, False)     
         sum_sq += sq        
     end = time.time()
     print("[trajectory timestep %s]: averaging s(q) for q = %s over %d directions for %d molec. took %s (s). {process %s}" \
@@ -67,7 +67,7 @@ def get_structure_factor_q(snap, qmod, get_rij_flag=False):
     if get_rij_flag :
         filename = 'rij_%s'%step
         f = open(filename, 'w')
-        f.write(snap['traj'])
+        f.write("#%s, %s"%(snap['traj'], step)
         for i in range(len(rij)):
             print "%s"% rij[i] 
         print("rij vector is written to %s")%filename
