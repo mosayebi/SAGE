@@ -67,7 +67,7 @@ def get_structure_factor_q(snap, qmod, get_rij_flag=False):
     if get_rij_flag :
         filename = 'rij_%s'%step
         f = open(filename, 'w')
-        f.write("#%s, %s"%(snap['traj'], step)
+        f.write("#%s, %s"%(snap['traj'], step))
         for i in range(len(rij)):
             print "%s"% rij[i] 
         print("rij vector is written to %s")%filename
