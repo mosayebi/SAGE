@@ -1306,7 +1306,7 @@ if __name__ == "__main__":
     futures=[]
     q = []
     
-    with contextlib.closing( Pool() ) as pool:
+    with contextlib.closing( Pool(15) ) as pool:
             for iq in range(Nq):
                 qmod = qmin + iq*dq
                 for replica in range(15):   
