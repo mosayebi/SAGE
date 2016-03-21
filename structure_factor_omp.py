@@ -35,7 +35,7 @@ def get_structure_factor_qv(xm, N_mol, box, qv):
       for mol2_id in range(mol1_id+1, N_mol):
         #if (mol1_id >= mol2_id): continue 
         dr = xm [ mol2_id, :] - xm [ mol1_id, :]
-        drs[i] = dr
+        drs[i,:] = dr
         i += 1
         # dr = hub.PBC (dr, box)
         # sq += 2*np.cos( np.dot(dr,qv) )
