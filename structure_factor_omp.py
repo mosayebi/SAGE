@@ -23,15 +23,20 @@ def random_unit_vector():
     return (x,y,z)
 
 
+
+
 def get_structure_factor_qv(xm, N_mol, box, qv):
     #q = np.array(random_unit_vector()) * qmod
     sq = 1.
-    drs = []
+    n_pairs = N_mol * (N_mol-1) / 2
+    drs = np.zeros((n_pairs, 3))
+    i = 0
     for mol1_id in range(N_mol):
       for mol2_id in range(mol1_id+1, N_mol):
-        if (mol1_id >= mol2_id): continue 
+        #if (mol1_id >= mol2_id): continue 
         dr = xm [ mol2_id, :] - xm [ mol1_id, :]
-        drs.append(dr)
+        drs[i] = dr
+        i += 1
         # dr = hub.PBC (dr, box)
         # sq += 2*np.cos( np.dot(dr,qv) )
     
