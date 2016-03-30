@@ -41,7 +41,8 @@ def read_atomistic_hub_vectors(filer):
         line=f.readline().strip('\n')
         for i in xrange(N_hub):
           line=f.readline().strip('\n').split()
-          nb[i] = [line[1]-1, line[2]-1, line[3]-1] 
+          print line
+          nb[i,:] = [line[1]-1, line[2]-1, line[3]-1] 
         line=f.readline().strip('\n')
         line=f.readline().strip('\n')  
         line=f.readline().strip('\n').split()  
