@@ -31,6 +31,73 @@ def read_atomistic_angles(filer):
       #print len(phi)    
       return np.array(phi), np.array(theta1), np.array(theta2)   
  
+def read_atomistic_hub_vectors(filer):
+  data = []
+  N_hub = 620
+  nb = np.zeros((N_hub,3), dtype=np.int)
+  with open(filer,'r') as f:
+      while True:
+        line=f.readline().strip('\n')
+        line=f.readline().strip('\n')
+        for i in xrange(N_hub):
+          line=f.readline().strip('\n').split()
+          nb[i] = [line[1]-1, line[2]-1, line[3]-1] 
+        line=f.readline().strip('\n')
+        line=f.readline().strip('\n')  
+        line=f.readline().strip('\n').split()  
+        while line:
+          snap = {}
+          Nvec=[]
+          Cvec=[]           
+          if line[0] == 'Time' :
+            snap['timestep'] = line[2]
+            print "reading timestep %s ns"% line[2]
+            for i in xrange(N_hub):
+              line=f.readline().strip('\n').split()
+              Nvec.append([ float(line[1]), float(line[2]), float(line[3]) ])
+              Cvec.append([ float(line[4]), float(line[5]), float(line[6]) ])
+            x = ( np.array(Nvec) + np.array(Cvec) ) / 2  
+            snap['coords'] = x
+            snap['N'] = N_hub
+          data.append(snap.copy())  
+          line=f.readline().strip('\n').split()    
+      return nb, data   
+
+def plot_atomistic_psi_hist(filer='/home/mm15804/SAGE/data/hub_vectors.his'):
+    nb, traj_data = read_atomistic_hub_vectors(filer)
+    angles = []
+    for snap in traj_data:
+        N_hub = snap['N']
+        x = snap['coords']
+        for i in xrange(N_hub):
+            j, k = nb[i,0], nb[i,1]
+            vec_j = x[j,:] - x[i,:] 
+            vec_k = x[k,:] - x[i,:] 
+            vec_j = vec_j / np.linalg.norm(vec_j)
+            vec_k = vec_k / np.linalg.norm(vec_k)
+            cos =  np.dot (vec_j, vec_k)
+            sin =  np.linalg.norm (np.cross (vec_j, vec_k))
+            angles.append(np.degrees(np.arctan2(sin,cos)))
+            j, k = nb[i,0], nb[i,3]
+            vec_j = x[j,:] - x[i,:] 
+            vec_k = x[k,:] - x[i,:] 
+            vec_j = vec_j / np.linalg.norm(vec_j)
+            vec_k = vec_k / np.linalg.norm(vec_k)
+            cos =  np.dot (vec_j, vec_k)
+            sin =  np.linalg.norm (np.cross (vec_j, vec_k))
+            angles.append(np.degrees(np.arctan2(sin,cos)))
+            j, k = nb[i,1], nb[i,3]
+            vec_j = x[j,:] - x[i,:] 
+            vec_k = x[k,:] - x[i,:] 
+            vec_j = vec_j / np.linalg.norm(vec_j)
+            vec_k = vec_k / np.linalg.norm(vec_k)
+            cos =  np.dot (vec_j, vec_k)
+            sin =  np.linalg.norm (np.cross (vec_j, vec_k))
+            angles.append(np.degrees(np.arctan2(sin,cos)))
+    pdf_file = 'atomistic_psi_angle_hist.pdf'
+    if len(angles)>1:
+        plot_1D_hist (angles, pdf_file)         
+
 
 
 def read_dump(filer, min_step=0, max_step=1e10):
