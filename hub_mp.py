@@ -41,8 +41,7 @@ def read_atomistic_hub_vectors(filer):
         line=f.readline().strip('\n')
         for i in xrange(N_hub):
           line=f.readline().strip('\n').split()
-          print line
-          nb[i,:] = [line[1]-1, line[2]-1, line[3]-1] 
+          nb[i,:] = [int(line[1])-1, int(line[2])-1, int(line[3])-1] 
         line=f.readline().strip('\n')
         line=f.readline().strip('\n')  
         line=f.readline().strip('\n').split()  
@@ -61,8 +60,8 @@ def read_atomistic_hub_vectors(filer):
             snap['coords'] = x
             snap['N'] = N_hub
           data.append(snap.copy())  
-          line=f.readline().strip('\n').split()    
-      return nb, data   
+          line=f.readline().strip('\n').split() 
+        return nb, data   
 
 def plot_atomistic_psi_hist(filer='/home/mm15804/SAGE/data/hub_vectors.his'):
     nb, traj_data = read_atomistic_hub_vectors(filer)
@@ -79,7 +78,7 @@ def plot_atomistic_psi_hist(filer='/home/mm15804/SAGE/data/hub_vectors.his'):
             cos =  np.dot (vec_j, vec_k)
             sin =  np.linalg.norm (np.cross (vec_j, vec_k))
             angles.append(np.degrees(np.arctan2(sin,cos)))
-            j, k = nb[i,0], nb[i,3]
+            j, k = nb[i,0], nb[i,2]
             vec_j = x[j,:] - x[i,:] 
             vec_k = x[k,:] - x[i,:] 
             vec_j = vec_j / np.linalg.norm(vec_j)
@@ -87,7 +86,7 @@ def plot_atomistic_psi_hist(filer='/home/mm15804/SAGE/data/hub_vectors.his'):
             cos =  np.dot (vec_j, vec_k)
             sin =  np.linalg.norm (np.cross (vec_j, vec_k))
             angles.append(np.degrees(np.arctan2(sin,cos)))
-            j, k = nb[i,1], nb[i,3]
+            j, k = nb[i,1], nb[i,2]
             vec_j = x[j,:] - x[i,:] 
             vec_k = x[k,:] - x[i,:] 
             vec_j = vec_j / np.linalg.norm(vec_j)
