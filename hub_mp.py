@@ -30,6 +30,8 @@ def read_atomistic_angles(filer):
           line=f.readline().strip('\n').split()
       #print len(phi)    
       return np.array(phi), np.array(theta1), np.array(theta2)   
+
+
  
 def read_atomistic_hub_vectors(filer):
   data = []
@@ -335,7 +337,7 @@ def render_tcl_file (res_x, res_y, png_file="out.png", tcl_out_file="out.tcl"):
     vmdin.write("%s"%tcl_out)
     vmdin.flush()
 
-    args = "-aasamples 12 out.render -format TGA -res %s %s -o out.tga"%(res_x,res_y)
+    args = "-aasamples 24 out.render -format TGA -res %s %s -o out.tga"%(res_x,res_y)
     command=[]
     command.append("/Applications/VMD 1.9.2.app/Contents/vmd/tachyon_MACOSXX86")
     command = command + args.split()
@@ -354,14 +356,14 @@ def render_tcl_file (res_x, res_y, png_file="out.png", tcl_out_file="out.tcl"):
     # print stdout, stderr
 
 def traj2movie(traj_data, movie_file='movie', cluster_flag=True, rotation_flag=True):
-    image_dir = 'images'
+    image_dir = 'images/'
     make_sure_path_exists(image_dir)
     for s, snap in enumerate(traj_data):
       tcl_out = conf2tcl (snap, cluster_flag)
       write_tcl_out (tcl_out, filename="out.tcl")
       png_file = image_dir+movie_file+".%05d.png"%int(s)
       print png_file
-      render_tcl_file (1024, 1024, png_file, "out.tcl")
+      render_tcl_file (2048, 2048, png_file, "out.tcl")
     #s = 415
     #tcl_out = conf2tcl (traj_data[-1], cluster_flag)
     if (rotation_flag):
@@ -372,7 +374,7 @@ def traj2movie(traj_data, movie_file='movie', cluster_flag=True, rotation_flag=T
           write_tcl_out (tcl_out + "rotate x by %s\n rotate y by %s\n"%(rot_x,rot_y), filename="out.tcl")
           png_file = image_dir+movie_file+".%05d.png"%int(s)
           print png_file
-          render_tcl_file (1024, 1024, png_file, "out.tcl")      
+          render_tcl_file (2048, 2048, png_file, "out.tcl")      
           s += 1
        for r in range(N_rot+1):
           rot_x = 0 #10 + r*360/50
@@ -380,9 +382,9 @@ def traj2movie(traj_data, movie_file='movie', cluster_flag=True, rotation_flag=T
           write_tcl_out (tcl_out + "rotate x by %s\n rotate y by %s\n"%(rot_x,rot_y), filename="out.tcl")
           png_file = image_dir+movie_file+".%05d.png"%int(s)
           print png_file
-          render_tcl_file (1024, 1024, png_file, "out.tcl")      
+          render_tcl_file (2048, 2048, png_file, "out.tcl")      
           s += 1
-    command = 'ffmpeg -y -r 10 -i '+ image_dir+movie_file +r'.%05d.png'+' -c:v libx264 -r 30 -pix_fmt yuv420p %s.mp4'%movie_file         
+    command = 'ffmpeg -y -r 15 -i '+ image_dir+movie_file +r'.%05d.png'+' -c:v libx264 -r 45 -pix_fmt yuv420p %s.mp4'%movie_file         
     #command = ['ffmpeg', '-t', '60', '-i', r'out_%05d.png',  '-y', movie_file]
     exe = subprocess.Popen(command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = exe.communicate()  
