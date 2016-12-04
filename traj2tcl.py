@@ -71,6 +71,7 @@ if __name__ == "__main__":
             snap = traj_data[i]
             tcl_file = 'tcl/'+traj_file+'.'+str(snap['step'])+".tcl"
             hub.write_tcl_out (tcl_out, filename=tcl_file)
+            hub.render_tcl_file_LINUX (1024, 1024, png_file=tcl_file+".png", tcl_out_file=tcl_file)
         else:
             print("Worker %d failed!" % i)
             try:

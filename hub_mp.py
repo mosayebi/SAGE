@@ -187,7 +187,7 @@ def conf2tcl(snap, cluster_flag=True, box_flag=True, psi3_flag=False, psi3=[]):
         psi3_flag = True 
         cluster_flag = False 
         psi3 = np.nan_to_num(psi3)
-
+    
     #print cluster 
 
     
@@ -299,6 +299,8 @@ def conf2tcl(snap, cluster_flag=True, box_flag=True, psi3_flag=False, psi3=[]):
     ret += "display resetview\n"
     ret += "rotate x by 10\n"
     ret += "rotate y by -10\n"
+
+
     return ret
 
 
@@ -354,6 +356,33 @@ def render_tcl_file (res_x, res_y, png_file="out.png", tcl_out_file="out.tcl"):
     # exe = subprocess.Popen(command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     # stdout, stderr = exe.communicate()  
     # print stdout, stderr
+
+def render_tcl_file_LINUX (res_x, res_y, png_file="out.png", tcl_out_file="out.tcl"):
+    tcl_out = "source %s\nrender Tachyon out.render\n" % (tcl_out_file)
+    vmdin = os.popen("vmd -dispdev none","w")
+    vmdin.write("%s"%tcl_out)
+    vmdin.flush()
+    
+    tga_file = png_file+'.tga'
+    args = "-aasamples 24 out.render -format TGA -res %s %s -o %s"%(res_x,res_y,tga_file)
+    command=[]
+    command.append("/home/mm15804/Downloads/vmd-1.9.3beta1/lib/tachyon/tachyon_LINUXAMD64")
+    command = command + args.split()
+    exe = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    stdout, stderr = exe.communicate()  
+    print stdout, stderr
+
+    # command = "convert %s -transparent black %s"% (tga_file, png_file)
+    # exe = subprocess.Popen(command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    # stdout, stderr = exe.communicate()  
+    # print stdout, stderr
+    
+    #print tga_file, png_file, tcl_out_file
+    #command = "rm %s %s %s out.render" % (
+    # exe = subprocess.Popen(command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    # stdout, stderr = exe.communicate()  
+    # print stdout, stderr
+
 
 def traj2movie(traj_data, movie_file='movie', cluster_flag=True, rotation_flag=True):
     image_dir = 'images/'
@@ -730,6 +759,7 @@ def snap2dihedrals_molmol(snap):
          theta2.append(bend2)
     return phi, theta1, theta2  
 
+
 def snap2dihedrals_hubhub(snap):
     x = snap['coords']
     p_type = snap['p_type']
@@ -756,6 +786,28 @@ def snap2dihedrals_hubhub(snap):
                   theta2.append(bend2)
     return phi, theta1, theta2              
    
+
+def snap2CG(snap):
+    x = snap['coords']
+    p_type = snap['p_type']
+    box = snap['box']
+    step = snap['step']
+    N_mol = snap['N']/16*2
+
+    nb_no, nb_list = build_nb_list(snap)
+    hub_hub_pairs =  build_hub_hub_pairs(nb_list, nb_no)
+
+    print nb_no, nb_list
+    print hub_hub_pairs
+
+    for i, pairs in enumerate(hub_hub_pairs):
+         for j, pair in enumerate(pairs):
+                  mol1 = pair[0]
+                  mol2 = pair[1]
+                  if (mol1 >= mol2): continue 
+                  print pair
+                  print x[get_helix_atom_ids(mol1),:] ,  x[get_helix_atom_ids(mol2),:]  
+
 
 
 def build_nb_list(snap):
