@@ -792,24 +792,34 @@ def snap2CG(snap):
     p_type = snap['p_type']
     box = snap['box']
     step = snap['step']
-    N_mol = snap['N']/16*2
+    N_mol = int(snap['N']/16*2)
    
-    # simple version: no dimer trimer  
+
+    CGsnap=[]
+    # simple version
     for mol in range(0, N_mol, 2):
         # trimer CC coordinate 
+        mol_pair = {}
         CCt_a = x[get_helix_atom_ids(mol)[2],:] - x[get_helix_atom_ids(mol)[0],:]
         CCt_a = CCt_a /np.linalg.norm(CCt_a)
         CCt_x = x[get_helix_atom_ids(mol)[0],:]
-        CCt_type = [get_patch_atom_ids(mol)[0][0]] #is always 2 (trimer)
+        CCt_type = p_type[get_patch_atom_ids(mol)[0][0]] #is always 2 (trimer)
         # dimer CC coordinate
         CCd_a = x[get_helix_atom_ids(mol+1)[2],:] - x[get_helix_atom_ids(mol+1)[0],:]
         CCd_a = CCd_a /np.linalg.norm(CCd_a)
         CCd_x = x[get_helix_atom_ids(mol+1)[0],:]
-        CCd_type = [get_patch_atom_ids(mol+1)[0][0]] #is always 2 (trimer)
+        CCd_type = p_type[get_patch_atom_ids(mol+1)[0][0]] #is always 2 (trimer)
 
+        mol_pair['tri_a'] = CCt_a
+        mol_pair['tri_x'] = CCt_x
+        mol_pair['tri_type'] = CCt_type
+        mol_pair['di_a'] = CCd_a
+        mol_pair['di_x'] = CCd_x
+        mol_pair['di_type'] = CCd_type
 
+        CGsnap.append(mol_pair.copy())
 
-
+    return CGsnap
 
     #nb_no, nb_list = build_nb_list(snap)
     #hub_hub_pairs =  build_hub_hub_pairs(nb_list, nb_no)  
@@ -821,6 +831,7 @@ def snap2CG(snap):
     #               print pair
     #               print x[get_helix_atom_ids(mol1),:] ,  x[get_helix_atom_ids(mol2),:]  
     #               sys.exit()
+
 
 
 
