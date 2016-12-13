@@ -802,12 +802,12 @@ def snap2CG(snap):
         mol_pair = {}
         CCt_a = x[get_helix_atom_ids(mol)[2],:] - x[get_helix_atom_ids(mol)[0],:]
         CCt_a = CCt_a /np.linalg.norm(CCt_a)
-        CCt_x = x[get_helix_atom_ids(mol)[0],:]
+        CCt_x = x[get_helix_atom_ids(mol)[1],:]
         CCt_type = p_type[get_patch_atom_ids(mol)[0][0]] #is always 2 (trimer)
         # dimer CC coordinate
         CCd_a = x[get_helix_atom_ids(mol+1)[2],:] - x[get_helix_atom_ids(mol+1)[0],:]
         CCd_a = CCd_a /np.linalg.norm(CCd_a)
-        CCd_x = x[get_helix_atom_ids(mol+1)[0],:]
+        CCd_x = x[get_helix_atom_ids(mol+1)[1],:]
         CCd_type = p_type[get_patch_atom_ids(mol+1)[0][0]] #is always 2 (trimer)
 
         mol_pair['tri_a'] = CCt_a

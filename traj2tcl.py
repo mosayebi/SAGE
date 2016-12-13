@@ -20,7 +20,7 @@ else:
 
 # traj_file = '/Users/mm15804/scratch/SAGE/psi3_test/dump_0.05.lammpstrj'
 traj_data = hub.read_dump(traj_file, min_timestep, max_timestep)
-#traj_data = traj_data[-10:]
+traj_data = traj_data[-10:]
 
 
 print("\nNumber of cores available equals %d\n" % cpu_count())
