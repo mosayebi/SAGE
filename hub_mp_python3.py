@@ -326,6 +326,15 @@ def vmd_hub(x1, x2, box, c=0):
     ret += "graphics 0 cylinder {%lf %lf %lf} {%lf %lf %lf} radius 0.4 resolution 30 filled yes\n" %(r1[0], r1[1], r1[2],  r2[0], r2[1], r2[2])
     return ret
 
+def vmd_patch(x, c):
+    ret = ''
+    if (not c==0):
+            ret += "graphics 0 color %s\n" % c  
+    ret += "graphics 0 sphere {%lf %lf %lf} radius 0.2 resolution 30\n" %(x[0], x[1], x[2])
+    return ret    
+
+
+
 def write_tcl_out (tcl_out, filename="out.tcl"):
     try:
         f = open (filename, 'w')
@@ -849,9 +858,11 @@ def mol2tcl(mol_id, snap, cluster_flag=True, psi3_flag=False, psi3=[]):
 
     #N=96
     ret = ''
+
+    #trimer CC
     for i in range(N):
         if (i%16 ==0 and p_type[i]==1 and get_mol_id(i)==mol_id ): 
-           ret += "graphics 0 color 7\n"   # blue
+           ret += "graphics 0 color 7\n"   # green
            if (cluster_flag):   
               ret += vmd_hub (x[i,:], x[i+2,:], box, int(float(cluster[i])/max(cluster[:]) * 1023 +1) )
            elif (psi3_flag):
@@ -918,6 +929,36 @@ def mol2tcl(mol_id, snap, cluster_flag=True, psi3_flag=False, psi3=[]):
               ret += vmd_bond (x[i,:], x[i-10,:], box, 0 )                   
         else:
            continue
+
+    #PATCHES
+    for i in range(N):
+        if (p_type[i]>=2 and p_type[i]<=13 and get_mol_id(i)==mol_id): 
+          
+           if p_type[i] == 11   : ret += "graphics 0 color 29\n"  #red2
+           elif p_type[i] == 12 : ret += "graphics 0 color 30\n"  #red3
+           elif p_type[i] == 13 : ret += "graphics 0 color 9\n"   #pink
+           elif p_type[i] == 8  : ret += "graphics 0 color 23\n"  #blue2
+           elif p_type[i] == 9  : ret += "graphics 0 color 24\n"  #blue3
+           elif p_type[i] == 10 : ret += "graphics 0 color 10\n"  #cyan
+           elif p_type[i] == 2 or p_type[i] == 5 : ret += "graphics 0 color 19\n"   #green2
+           elif p_type[i] == 3 or p_type[i] == 6 : ret += "graphics 0 color 20\n"   #green3
+           elif p_type[i] == 4 or p_type[i] == 7 : ret += "graphics 0 color 12\n"   #lime
+           else : ret += "graphics 0 color 6\n"   # default color : silver
+
+           if (cluster_flag):   
+              ret += vmd_patch (x[i,:], int(float(cluster[i])/max(cluster[:]) * 1023 +1) )
+           elif (psi3_flag):
+              c = np.nan_to_num(psi3[get_mol_id(i)]) ** 2
+              if c == 0:
+                c=1
+              else:
+                c=int((c-cmin)/(cmax-cmin) * 950 + 70)
+              ret += vmd_patch (x[i,:], c ) 
+           else:
+              ret += vmd_patch (x[i,:], 0 ) 
+        else:
+           continue  
+
 
     return ret
 
