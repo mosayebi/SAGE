@@ -144,11 +144,11 @@ def read_dump(filer, min_step=0, max_step=1e10):
                 snapshot['box'] = np.array([box_x, box_y, box_z])
             if items[1] == 'ATOMS':
                 if (len(items)>7):
-                   if ( items[7] == "c_c1"): 
+                   if 'c_cl' in items[7]:
                       cluster_flag=True
                       cluster = np.zeros(N, dtype=np.int)
                    else:
-                      cluster = []   
+                      cluster = [] 
                 p_type = np.zeros(N, dtype=np.int)
                 x = np.zeros((N,3))
                 for i in range(N):
@@ -229,7 +229,7 @@ def conf2tcl(snap, cluster_flag=True, box_flag=True, psi3_flag=False, psi3=[]):
     #N=96
     ret += "graphics 0 color 7\n"   # blue
     for i in range(N):
-        if (i%16 ==0 and p_type[i]==1): 
+        if (i%16 ==0 and p_type[i]==1 ): 
            if (cluster_flag):   
               ret += vmd_hub (x[i,:], x[i+2,:], box, int(float(cluster[i])/max(cluster[:]) * 1023 +1) )
            elif (psi3_flag):
@@ -787,50 +787,198 @@ def snap2dihedrals_hubhub(snap):
     return phi, theta1, theta2              
    
 
+
+def mols_tcl_header(box, box_flag):
+    ret  = "color Display Background white\n"
+    ret  +="display projection orthographic\n"
+    ret  +="axes location off\n"
+    ret  += "mol new\n"
+    ret  += "color scale method RGB\n"
+    ret  += "graphics 0 delete all\n"
+
+    if (box_flag):
+        box_radius = 0.1
+        ret += "graphics 0 color 0\n"
+        ret += "graphics 0 cylinder {%lf %lf %lf} {%lf %lf %lf} radius 0.1 resolution 20 filled yes\n" % (-box[0]/2., -box[1]/2., -box[2]/2., box[0]/2., -box[1]/2., -box[2]/2.)
+        ret += "graphics 0 cylinder {%lf %lf %lf} {%lf %lf %lf} radius 0.1 resolution 20 filled yes\n" % (-box[0]/2., -box[1]/2., box[2]/2., box[0]/2., -box[1]/2., box[2]/2.)
+        ret += "graphics 0 cylinder {%lf %lf %lf} {%lf %lf %lf} radius 0.1 resolution 20 filled yes\n" % (-box[0]/2., +box[1]/2., -box[2]/2., -box[0]/2., -box[1]/2., -box[2]/2.)
+        ret += "graphics 0 cylinder {%lf %lf %lf} {%lf %lf %lf} radius 0.1 resolution 20 filled yes\n" % (-box[0]/2., +box[1]/2., box[2]/2., -box[0]/2., -box[1]/2., box[2]/2.)
+        ret += "graphics 0 cylinder {%lf %lf %lf} {%lf %lf %lf} radius 0.1 resolution 20 filled yes\n" % (box[0]/2., +box[1]/2., box[2]/2., box[0]/2., -box[1]/2., box[2]/2.)
+        ret += "graphics 0 cylinder {%lf %lf %lf} {%lf %lf %lf} radius 0.1 resolution 20 filled yes\n" % (box[0]/2., +box[1]/2., -box[2]/2., box[0]/2., -box[1]/2., -box[2]/2.)
+        ret += "graphics 0 cylinder {%lf %lf %lf} {%lf %lf %lf} radius 0.1 resolution 20 filled yes\n" % (-box[0]/2., +box[1]/2., -box[2]/2., box[0]/2., +box[1]/2., -box[2]/2.)
+        ret += "graphics 0 cylinder {%lf %lf %lf} {%lf %lf %lf} radius 0.1 resolution 20 filled yes\n" % (-box[0]/2., +box[1]/2., box[2]/2., box[0]/2., +box[1]/2., box[2]/2.)
+        ret += "graphics 0 cylinder {%lf %lf %lf} {%lf %lf %lf} radius 0.1 resolution 20 filled yes\n" % (-box[0]/2., -box[1]/2.,-box[2]/2.,-box[0]/2., -box[1]/2.,+box[2]/2.)
+        ret += "graphics 0 cylinder {%lf %lf %lf} {%lf %lf %lf} radius 0.1 resolution 20 filled yes\n" % (box[0]/2., -box[1]/2.,-box[2]/2.,box[0]/2., -box[1]/2.,+box[2]/2.)
+        ret += "graphics 0 cylinder {%lf %lf %lf} {%lf %lf %lf} radius 0.1 resolution 20 filled yes\n" % (box[0]/2., box[1]/2.,-box[2]/2.,box[0]/2., box[1]/2.,+box[2]/2.)
+        ret += "graphics 0 cylinder {%lf %lf %lf} {%lf %lf %lf} radius 0.1 resolution 20 filled yes\n" % (-box[0]/2., box[1]/2.,-box[2]/2.,-box[0]/2., box[1]/2.,+box[2]/2.)
+    return ret
+
+def mols_tcl_footer():
+    ret = "display resetview\n"
+    ret += "rotate x by 10\n"
+    ret += "rotate y by -10\n"
+    return ret
+
+
+def mol2tcl(mol_id, snap, cluster_flag=True, psi3_flag=False, psi3=[]):
+    x = snap['coords']
+    p_type = snap['p_type']
+    box = snap['box']
+    step = snap['step']
+    N = snap['N']
+    cluster=snap['cluster']
+    if (cluster_flag and len(cluster)==0): 
+        print("Warning: no cluster data found. Cluster coloring is off.")
+        cluster_flag=False
+        psi3_flag = False
+    if (len(psi3)!=0):
+        psi3_flag = True 
+        cluster_flag = False 
+        psi3 = np.nan_to_num(psi3)
+    
+    #print cluster 
+
+    if (psi3_flag): 
+        cmax =  1.
+        cmin =  0.
+        # if len(psi3[np.nonzero(np.nan_to_num(psi3))]) > 0 :
+        #    cmin = np.min(psi3[np.nonzero(psi3)])
+        #    if cmin == 1 : 
+        #     cmin = 0
+        # print cmin, cmax   
+
+    #N=96
+    ret = ''
+    for i in range(N):
+        if (i%16 ==0 and p_type[i]==1 and get_mol_id(i)==mol_id ): 
+           ret += "graphics 0 color 7\n"   # blue
+           if (cluster_flag):   
+              ret += vmd_hub (x[i,:], x[i+2,:], box, int(float(cluster[i])/max(cluster[:]) * 1023 +1) )
+           elif (psi3_flag):
+              c = np.nan_to_num(psi3[get_mol_id(i)]) ** 2
+              if c == 0:
+                c=1
+              else:
+                c=int((c-cmin)/(cmax-cmin) * 950 + 70)
+              ret += vmd_hub (x[i,:], x[i+2,:], box, c )             
+           else:
+              ret += vmd_hub (x[i,:], x[i+2,:], box, 0 )    
+        else:
+           continue
+
+    for i in range(N):
+        #ret += '#%s  %s %s %s %s\n'% (i,p_type[i], x[i,0],x[i,1],x[i,2])  
+        if (i%16 == 10 and p_type[i+3]==8 and get_mol_id(i)==mol_id): 
+           ret += "graphics 0 color 0\n"   # blue
+           if (cluster_flag):   
+              ret += vmd_hub (x[i,:], x[i+2,:], box, int(float(cluster[i])/max(cluster[:]) * 1023 +1) )
+           elif (psi3_flag):
+              c = np.nan_to_num(psi3[get_mol_id(i)]) ** 2
+              if c == 0:
+                c=1
+              else:
+                c=int((c-cmin)/(cmax-cmin) * 950 + 70)
+              ret += vmd_hub (x[i,:], x[i+2,:], box, c ) 
+           else:
+              ret += vmd_hub (x[i,:], x[i+2,:], box, 0 ) 
+        else:
+           continue
+                 
+    for i in range(N):
+        if (i%16 == 10 and p_type[i+3]==11 and get_mol_id(i)==mol_id):  
+           ret += "graphics 0 color 1\n"   # red
+           if (cluster_flag):   
+              ret += vmd_hub (x[i,:], x[i+2,:], box, int(float(cluster[i])/max(cluster[:]) * 1023 +1) )
+           elif (psi3_flag):
+              c = np.nan_to_num(psi3[get_mol_id(i)]) ** 2
+              if c == 0:
+                c=1
+              else:
+                c=int((c-cmin)/(cmax-cmin) * 950 + 70)
+              ret += vmd_hub (x[i,:], x[i+2,:], box, c )  
+           else:
+              ret += vmd_hub (x[i,:], x[i+2,:], box, 0 ) 
+        else:
+           continue
+    
+    #ret += "graphics 0 color 6\n"   # silver
+    for i in range(N):
+        if (i%16==10 and p_type[i]==1 and get_mol_id(i-10)==mol_id): 
+            ret += "graphics 0 color 6\n"   # silver
+            if (cluster_flag):
+              ret += vmd_bond (x[i,:], x[i-10,:], box, int(float(cluster[i])/max(cluster[:])*1023 + 1) )
+            elif (psi3_flag):
+              c = np.nan_to_num(psi3[get_mol_id(i-10)]) ** 2
+              if c == 0:
+                c=1
+              else:
+                c=int((c-cmin)/(cmax-cmin) * 950 + 70)               
+              ret += vmd_bond (x[i,:], x[i-10,:], box, c )              
+            else:
+              ret += vmd_bond (x[i,:], x[i-10,:], box, 0 )                   
+        else:
+           continue
+
+    return ret
+
+
+
 def snap2CG(snap):
     x = snap['coords']
     p_type = snap['p_type']
     box = snap['box']
     step = snap['step']
     N_mol = int(snap['N']/16*2)
+    cluster = snap['cluster']
+
+    #print (len(cluster))
+    if len(cluster)>0:
+      count = {}
+      for cid in cluster:
+          count[cid] = (count.get(cid, 0)) + 1 
+      max_key = [k  for k in sorted(count, key=count.get, reverse=True)]
+      print ('the largest cluster with index %s has %s atoms'%(max_key[0], count[max_key[0]]) )
+      print ('the second largest cluster with index %s has %s atoms'%(max_key[1], count[max_key[1]]) )
+   
    
 
     CGsnap=[]
     # simple version
     for mol in range(0, N_mol, 2):
-        # trimer CC coordinate 
         mol_pair = {}
+        # trimer CC coordinate
+
         CCt_a = x[get_helix_atom_ids(mol)[2],:] - x[get_helix_atom_ids(mol)[0],:]
         CCt_a = CCt_a /np.linalg.norm(CCt_a)
-        CCt_x = x[get_helix_atom_ids(mol)[1],:]
+        CCt_x = x[get_helix_atom_ids(mol)[0],:]
         CCt_type = p_type[get_patch_atom_ids(mol)[0][0]] #is always 2 (trimer)
+        CCt_tcl = mol2tcl(mol, snap, cluster_flag=False, psi3_flag=False, psi3=[])
         # dimer CC coordinate
         CCd_a = x[get_helix_atom_ids(mol+1)[2],:] - x[get_helix_atom_ids(mol+1)[0],:]
         CCd_a = CCd_a /np.linalg.norm(CCd_a)
-        CCd_x = x[get_helix_atom_ids(mol+1)[1],:]
-        CCd_type = p_type[get_patch_atom_ids(mol+1)[0][0]] #is always 2 (trimer)
+        CCd_x = x[get_helix_atom_ids(mol+1)[0],:]
+        CCd_type = p_type[get_patch_atom_ids(mol+1)[0][0]] #is x or y for A and B CCdimers
+        CCd_tcl = mol2tcl(mol+1, snap, cluster_flag=False, psi3_flag=False, psi3=[])
+
 
         mol_pair['tri_a'] = CCt_a
         mol_pair['tri_x'] = CCt_x
-        mol_pair['tri_type'] = CCt_type
+        mol_pair['tri_type'] = CCt_type        
+        mol_pair['tri_tcl'] = CCt_tcl
         mol_pair['di_a'] = CCd_a
         mol_pair['di_x'] = CCd_x
         mol_pair['di_type'] = CCd_type
+        mol_pair['di_tcl'] = CCd_tcl
+       
+        mol_pair['visiblity'] = -1
+        if len(cluster) > 0 :
+          for i in range(len(max_key)):   #will convert only two largest clusters
+            if (cluster[get_helix_atom_ids(mol)[0]] == max_key[i] and cluster[get_helix_atom_ids(mol+1)[0]] == max_key[i]):
+              mol_pair['visiblity'] = i
 
         CGsnap.append(mol_pair.copy())
 
     return CGsnap
-
-    #nb_no, nb_list = build_nb_list(snap)
-    #hub_hub_pairs =  build_hub_hub_pairs(nb_list, nb_no)  
-    # for i, pairs in enumerate(hub_hub_pairs):
-    #      for j, pair in enumerate(pairs):
-    #               mol1 = pair[0]
-    #               mol2 = pair[1]
-    #               if (mol1 >= mol2): continue 
-    #               print pair
-    #               print x[get_helix_atom_ids(mol1),:] ,  x[get_helix_atom_ids(mol2),:]  
-    #               sys.exit()
 
 
 

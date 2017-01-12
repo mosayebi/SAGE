@@ -793,13 +793,31 @@ def snap2CG(snap):
     box = snap['box']
     step = snap['step']
     N_mol = int(snap['N']/16*2)
+    cluster = snap['cluster']
+
+    if len(cluster)>0:
+      count = {}
+      for cid in cluster:
+          count[cid] = (count.get(cid, 0)) + 1 
+      max_key = []    
+      for key, value in sorted(count.iteritems(), key=lambda (k,v): (v,k)):
+           max_key.append(key)
+      #max_key = max(count, key=lambda k: count[k])
+
+      print 'the largest cluster with index %s has %s atoms'%(max_key[0], count[max_key[0]])
+      print 'the second largest cluster with index %s has %s atoms'%(max_key[1], count[max_key[1]])
+   
+    break
    
 
     CGsnap=[]
     # simple version
     for mol in range(0, N_mol, 2):
-        # trimer CC coordinate 
         mol_pair = {}
+        # trimer CC coordinate
+
+
+
         CCt_a = x[get_helix_atom_ids(mol)[2],:] - x[get_helix_atom_ids(mol)[0],:]
         CCt_a = CCt_a /np.linalg.norm(CCt_a)
         CCt_x = x[get_helix_atom_ids(mol)[0],:]
@@ -808,7 +826,7 @@ def snap2CG(snap):
         CCd_a = x[get_helix_atom_ids(mol+1)[2],:] - x[get_helix_atom_ids(mol+1)[0],:]
         CCd_a = CCd_a /np.linalg.norm(CCd_a)
         CCd_x = x[get_helix_atom_ids(mol+1)[0],:]
-        CCd_type = p_type[get_patch_atom_ids(mol+1)[0][0]] #is always 2 (trimer)
+        CCd_type = p_type[get_patch_atom_ids(mol+1)[0][0]] #is x or y for A and B CCdimers
 
         mol_pair['tri_a'] = CCt_a
         mol_pair['tri_x'] = CCt_x
@@ -816,6 +834,10 @@ def snap2CG(snap):
         mol_pair['di_a'] = CCd_a
         mol_pair['di_x'] = CCd_x
         mol_pair['di_type'] = CCd_type
+        mol_pair['visiblity'] = -1
+        if len(cluster) > 0 and not cluster[get_helix_atom_ids(mol)[0]] == max_key:
+             mol_pair['visiblity'] = 1
+
 
         CGsnap.append(mol_pair.copy())
 

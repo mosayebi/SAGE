@@ -54,12 +54,14 @@ if len(sys.argv) == 2 :
    traj_file = sys.argv[1]
    max_timestep = 1e10
    min_timestep = 0
-elif len(sys.argv) == 4 :
+   mols = -1
+elif len(sys.argv) == 5 :
    traj_file = sys.argv[1]
    min_timestep = float(sys.argv[2])
    max_timestep = float(sys.argv[3])
+   mols = float(sys.argv[4])
 else:
-    print ('Usage: %s dump_file [min_timestep max_timestep]' % (sys.argv[0]))
+    print ('Usage: %s dump_file [min_timestep max_timestep #molecules]' % (sys.argv[0]))
     sys.exit(1)
 
 
@@ -81,19 +83,48 @@ traj_data = hub_mp.read_dump(traj_file, min_timestep, max_timestep)
 traj_data = traj_data[-1:] 
 
 
+
 for step, snap in enumerate(traj_data):
     CGsnap = hub_mp.snap2CG(snap)
-    sage_system = isambard.ampal.Assembly()
-    for mol_id, mol in enumerate(CGsnap[:100]):   
-        dimer = copy.deepcopy(dimer_mon)
-        trimer = copy.deepcopy(trimer_mon)
-        dimer = transform_mon(dimer, mol['di_x']*10, mol['di_a'] )
-        trimer = transform_mon(trimer, mol['tri_x']*10, mol['tri_a'] )                                 
-        sage_system.extend(dimer) 
-        sage_system.extend(trimer)  
-        print (mol_id)
-    sage_system.relabel_all()
+    for i in range(10): 
+        sage_system = isambard.ampal.Assembly() 
+        tcl_out = hub_mp.mols_tcl_header(snap['box'], False)
+        cnt = 0
+        print('%s mol_ids:' % i)
+        for mol_id, mol in enumerate(CGsnap[0:int(mols)]): 
+            if mol['visiblity'] != i : continue
+            dimer = copy.deepcopy(dimer_mon)
+            trimer = copy.deepcopy(trimer_mon)
+            dimer = transform_mon(dimer, mol['di_x']*10, mol['di_a'] )
+            trimer = transform_mon(trimer, mol['tri_x']*10, mol['tri_a'] )                                 
+            sage_system.extend(dimer) 
+            sage_system.extend(trimer)
+            tcl_out += mol['di_tcl']  
+            tcl_out += mol['tri_tcl']  
+            print (mol_id, end=" ")
+            cnt += 1
+            #if (cnt>100): break
+        if (cnt==0): break
+        com_to_zero = - sage_system.centre_of_mass    
+        sage_system.translate(com_to_zero)
+        tcl_out += hub_mp.mols_tcl_footer()
+        #sage_system.relabel_all() !can mess up with PDB for very large confs
+        output = traj_file+'_'+str(i)+'_'+str(cnt)+'_'+str(snap['step'])+'.pdb'
+        path='/'.join(traj_file.split('/')[:-1])
+        if path=='': path='.'
+        hub_mp.make_sure_path_exists(path+'/pdb')
+        output = path+'/pdb/'+''.join(traj_file.split('/')[-1:])+'_'+str(i)+'_'+str(cnt)+'_'+str(snap['step'])+'.pdb'
+        tcloutput = path+'/pdb/'+''.join(traj_file.split('/')[-1:])+'_'+str(i)+'_'+str(cnt)+'_'+str(snap['step'])+'.tcl'
+        with open(output, 'w') as outf:
+            outf.write(sage_system.pdb)
+            print('\n(%s) %s molecules are converted to PDB' % (i, int(cnt)))
+            print('The PDB file saved to %s' % output) 
+        with open(tcloutput, 'w') as outf:
+            outf.write(tcl_out)
+            print('The tcl file saved to %s \n\n' % tcloutput) 
+            hub_mp.render_tcl_file_LINUX (1024, 1024, png_file=output+".png", tcl_out_file=tcloutput)
+        del sage_system         
     break
-with open('output.pdb', 'w') as outf:
-    outf.write(sage_system.pdb)
+
+
 
