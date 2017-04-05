@@ -807,7 +807,7 @@ def snap2CG(snap):
       print 'the largest cluster with index %s has %s atoms'%(max_key[0], count[max_key[0]])
       print 'the second largest cluster with index %s has %s atoms'%(max_key[1], count[max_key[1]])
    
-      break
+    #break
    
 
     CGsnap=[]
