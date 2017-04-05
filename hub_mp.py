@@ -1246,6 +1246,28 @@ def plot_hist(x,y,z, filename, x_lim):
     from matplotlib.backends.backend_pdf import PdfPages
     from scipy.optimize import curve_fit
     from scipy import stats, integrate
+
+
+    import pylab 
+
+    fig = pylab.figure(0, figsize = (6,4))
+    fig_width_pt = 16*246.0  # Get this from LaTeX using \showthe\columnwidth
+    inches_per_pt = 1.0/72.27               # Convert pt to inch
+    golden_mean = (np.sqrt(5)-1.0)/2.0         # Aesthetic ratio
+    fig_width = fig_width_pt*inches_per_pt  # width in inches
+    fig_height = fig_width*golden_mean      # height in inches
+    fig_size =  [fig_width,fig_height]
+    params = {'backend': 'ps',
+              'axes.labelsize': 14,
+              #'text.fontsize': 14,
+              'legend.fontsize': 10,
+              'xtick.labelsize': 11,
+              'ytick.labelsize': 11,
+              #'text.usetex': True,
+              'figure.figsize': fig_size,
+              'text.latex.preamble': [r"\usepackage{amstext}", r"\usepackage{mathpazo}"]}
+    pylab.rcParams.update(params)
+
     (x, y, z) = (np.array(x), np.array(y), np.array(z))
     (x, y, z) = (x[~is_outlier(x)], y[~is_outlier(y)], z[~is_outlier(z)])
 
@@ -1276,10 +1298,14 @@ def plot_hist(x,y,z, filename, x_lim):
     if len(x_lim)>0 : plt.xlim(x_lim)
     #plt.grid(True)
     #plt.show() 
+
+
+    fig.tight_layout()
     with PdfPages(filename) as pdf:
-         pdf.savefig(transparent=True)
-    plt.close()   
-    print "angel histograms are saved in %s" % filename     
+          pdf.savefig(transparent=True)
+          plt.close()
+          print "angel histograms are saved in %s" % filename     
+
 
 
 def plot_1D_hist(x, filename='hist.pdf'):

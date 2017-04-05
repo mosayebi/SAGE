@@ -138,6 +138,17 @@ if __name__ == "__main__":
     
 
     with contextlib.closing( Pool() ) as pool:
+
+
+        for i in range(len(traj_data)):
+            qmod = []
+            snap = []
+            for iq in range(Nq):
+                qmod[iq] = qmin + iq*dq
+                snap[iq] = traj_data[i]
+
+            result = pool.map( get_structure_factor_q, zip(snap,qmod) )
+
         for i in range(len(traj_data)):
             for iq in range(Nq):
                 qmod = qmin + iq*dq
@@ -146,30 +157,30 @@ if __name__ == "__main__":
                 q.append(qmod)
 
 
-
-    #futures[-1].wait()
-    cnt = 0
-    while True:
-        all_finished = True
-        running = 0
-        cnt += 1
-        #print("\nHave the workers finished?")
-        for i in range(0,len(futures)):
-            #if futures[i].ready():
-                #print("Worker %d has finished" % i)
-            #else:
-            if not futures[i].ready():
-                all_finished = False
-                running += 1
-                #print("Worker %d is running..." % i)
-        if all_finished:
-            #print("All %d workers are done..."%len(futures))
-            break
-        time.sleep(10)
-        print("(%d) running(queued) workers =  %d,     done = %d" % (cnt, running, len(futures)-running)) 
-
-    end = time.time()
-    print ("time: %s (s) for %d workers [%f]" %((end-start), len(futures), (end-start)/len(futures)))
+    
+        #futures[-1].wait()
+        cnt = 0
+        while True:
+            all_finished = True
+            running = 0
+            cnt += 1
+            #print("\nHave the workers finished?")
+            for i in range(0,len(futures)):
+                #if futures[i].ready():
+                    #print("Worker %d has finished" % i)
+                #else:
+                if not futures[i].ready():
+                    all_finished = False
+                    running += 1
+                    #print("Worker %d is running..." % i)
+            if all_finished:
+                #print("All %d workers are done..."%len(futures))
+                break
+            time.sleep(10)
+            print("(%d) running(queued) workers =  %d,     done = %d" % (cnt, running, len(futures)-running)) 
+    
+        end = time.time()
+        print ("time: %s (s) for %d workers [%f]" %((end-start), len(futures), (end-start)/len(futures)))
 
     sum_sq = {}
     sum_sq2= {}
