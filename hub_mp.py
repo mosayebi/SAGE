@@ -1274,9 +1274,9 @@ def plot_hist(x,y,z, filename, x_lim):
     #print x,y,z
     #(y,z) = (z,y)
     #the histogram of the data
-    nx, binsx, patchesx = plt.hist(x, 72, normed=1, facecolor='green', alpha=0.75, label='$\phi$')
-    ny, binsy, patchesy = plt.hist(y, 71, normed=1, facecolor='red', alpha=0.6, label=r'$\theta_1$')
-    nz, binsz, patchesz = plt.hist(z, 70, normed=1, facecolor='cyan', alpha=0.25, label=r'$\theta_2$')
+    nx, binsx, patchesx = plt.hist(x, 72, normed=1, facecolor='green', alpha=0.75, label='$\Phi$')
+    ny, binsy, patchesy = plt.hist(y, 71, normed=1, facecolor='red', alpha=0.6, label=r'$\Theta_1$')
+    nz, binsz, patchesz = plt.hist(z, 70, normed=1, facecolor='cyan', alpha=0.25, label=r'$\Theta_2$')
 
     (mu_z, sigma_z) = stats.norm.fit(z)
     (mu_y, sigma_y) = stats.norm.fit(y)
@@ -1289,10 +1289,10 @@ def plot_hist(x,y,z, filename, x_lim):
     ly = plt.plot(binsy, fity, 'r-.', linewidth=1, alpha=0.85)
     lz = plt.plot(binsz, fitz, 'c--', linewidth=1, alpha=0.65)
 
-    #n, bins, patches = plt.hist(z, 30, normed=1, facecolor='blue', alpha=0.5, label='$\\theta_2$')
+    #n, bins, patches = plt.hist(z, 30, normed=1, facecolor='blue', alpha=0.5, label='$\\Theta_2$')
     plt.xlabel(r'$\mathrm{angle}\ ^\circ$')
     plt.ylabel(r'$\mathrm {probability}$')
-    plt.title(r'$\mu_{\phi}=%.2f,\ \sigma_{\phi}=%.2f,\ \ \ \mu_{\theta_1}=%.2f,\ \sigma_{\theta_1}=%.2f,\ \ \ \mu_{\theta_2}=%.2f,\ \sigma_{\theta_2}=%.2f$' \
+    plt.title(r'$\mu_{\Phi}=%.2f,\ \sigma_{\Phi}=%.2f,\ \ \ \mu_{\Theta_1}=%.2f,\ \sigma_{\Theta_1}=%.2f,\ \ \ \mu_{\Theta_2}=%.2f,\ \sigma_{\Theta_2}=%.2f$' \
               %(mu_x, sigma_x, mu_y, sigma_y, mu_z, sigma_z),  fontsize=10)
     plt.legend(loc='upper right')
     if len(x_lim)>0 : plt.xlim(x_lim)
@@ -1326,11 +1326,11 @@ def plot_1D_hist(x, filename='hist.pdf'):
     #lx = plt.plot(binsx, fitx, 'g-', linewidth=1, alpha=0.85)
 
 
-    #n, bins, patches = plt.hist(z, 30, normed=1, facecolor='blue', alpha=0.5, label='$\\theta_2$')
+    #n, bins, patches = plt.hist(z, 30, normed=1, facecolor='blue', alpha=0.5, label='$\\Theta_2$')
     plt.xlabel(r'$\mathrm{angle}\ ^\circ$')
     plt.ylabel(r'$\mathrm {probability}$')
     plt.title(r'$N=%d,\ \psi_{{\mathrm{avg}}}=%.2f$' % (len(x), sum(x)/len(x)))
-    #plt.title(r'$\mu_{\psi}=%.2f,\ \sigma_{\phi}=%.2f\  \mu_{\theta_1}=%.2f,\ \sigma_{\theta_1}=%.2f\  \mu_{\theta_2}=%.2f,\ \sigma_{\theta_2}=%.2f$' %(mu_x, sigma_x, mu_y, sigma_y, mu_z, sigma_z))
+    #plt.title(r'$\mu_{\psi}=%.2f,\ \sigma_{\Phi}=%.2f\  \mu_{\Theta_1}=%.2f,\ \sigma_{\Theta_1}=%.2f\  \mu_{\Theta_2}=%.2f,\ \sigma_{\Theta_2}=%.2f$' %(mu_x, sigma_x, mu_y, sigma_y, mu_z, sigma_z))
     plt.legend(loc='upper right')
     #plt.xlim([-15,15])
     #plt.grid(True)
@@ -1358,11 +1358,11 @@ def plot_1D_hist_noX(x, filename='hist.png'):
     #lx = plt.plot(binsx, fitx, 'g-', linewidth=1, alpha=0.85)
 
 
-    #n, bins, patches = plt.hist(z, 30, normed=1, facecolor='blue', alpha=0.5, label='$\\theta_2$')
+    #n, bins, patches = plt.hist(z, 30, normed=1, facecolor='blue', alpha=0.5, label='$\\Theta_2$')
     plt.xlabel(r'$\mathrm{angle}\ ^\circ$')
     plt.ylabel(r'$\mathrm {probability}$')
     plt.title(r'$N=%d,\ \psi_{{\mathrm{avg}}}=%.2f$' % (len(x), sum(x)/len(x)))
-    #plt.title(r'$\mu_{\psi}=%.2f,\ \sigma_{\phi}=%.2f\  \mu_{\theta_1}=%.2f,\ \sigma_{\theta_1}=%.2f\  \mu_{\theta_2}=%.2f,\ \sigma_{\theta_2}=%.2f$' %(mu_x, sigma_x, mu_y, sigma_y, mu_z, sigma_z))
+    #plt.title(r'$\mu_{\psi}=%.2f,\ \sigma_{\Phi}=%.2f\  \mu_{\Theta_1}=%.2f,\ \sigma_{\Theta_1}=%.2f\  \mu_{\Theta_2}=%.2f,\ \sigma_{\Theta_2}=%.2f$' %(mu_x, sigma_x, mu_y, sigma_y, mu_z, sigma_z))
     plt.legend(loc='upper right')
     #plt.xlim([-15,15])
     #plt.grid(True)
@@ -1405,8 +1405,8 @@ def plot_scatter_hist(x,y):
     # no labels for hists
     axHistx.xaxis.set_major_formatter(nullfmt)
     axHisty.yaxis.set_major_formatter(nullfmt)
-    axScatter.set_xlabel('$\phi$')
-    axScatter.set_ylabel('$\\theta$')
+    axScatter.set_xlabel('$\Phi$')
+    axScatter.set_ylabel('$\\Theta$')
 
     # the scatter plot:
     axScatter.scatter(x, y)
@@ -1470,7 +1470,7 @@ def plot_scatter_hist_sns(x, y):
     #sns.set(color_codes=True)
     #sns.set(style="darkgrid")
     sns.set(style="ticks")
-    sns.jointplot(np.array(x), np.array(y), kind="hex", size=4, stat_func=None).set_axis_labels("$\phi$", "$\\theta$")
+    sns.jointplot(np.array(x), np.array(y), kind="hex", size=4, stat_func=None).set_axis_labels("$\Phi$", "$\\Theta$")
     with PdfPages('plot4.pdf') as pdf:
          pdf.savefig(transparent=True)
     sns.plt.close() 
