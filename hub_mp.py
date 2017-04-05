@@ -1250,7 +1250,7 @@ def plot_hist(x,y,z, filename, x_lim):
 
     import pylab 
 
-    fig = pylab.figure(0, figsize = (6,4))
+    fig = pylab.figure(0, figsize = (5,3.5))
     fig_width_pt = 16*246.0  # Get this from LaTeX using \showthe\columnwidth
     inches_per_pt = 1.0/72.27               # Convert pt to inch
     golden_mean = (np.sqrt(5)-1.0)/2.0         # Aesthetic ratio
@@ -1293,7 +1293,7 @@ def plot_hist(x,y,z, filename, x_lim):
     plt.xlabel(r'$\mathrm{angle}\ ^\circ$')
     plt.ylabel(r'$\mathrm {probability}$')
     plt.title(r'$\mu_{\Phi}=%.2f,\ \sigma_{\Phi}=%.2f,\ \ \ \mu_{\Theta_1}=%.2f,\ \sigma_{\Theta_1}=%.2f,\ \ \ \mu_{\Theta_2}=%.2f,\ \sigma_{\Theta_2}=%.2f$' \
-              %(mu_x, sigma_x, mu_y, sigma_y, mu_z, sigma_z),  fontsize=10)
+              %(mu_x, sigma_x, mu_y, sigma_y, mu_z, sigma_z),  fontsize=9)
     plt.legend(loc='upper right')
     if len(x_lim)>0 : plt.xlim(x_lim)
     #plt.grid(True)
