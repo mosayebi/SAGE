@@ -1274,9 +1274,9 @@ def plot_hist(x,y,z, filename, x_lim):
     #print x,y,z
     #(y,z) = (z,y)
     #the histogram of the data
-    nx, binsx, patchesx = plt.hist(x, 72, normed=1, facecolor='green', alpha=0.75, label='$\Phi$')
-    ny, binsy, patchesy = plt.hist(y, 71, normed=1, facecolor='red', alpha=0.6, label=r'$\Theta_1$')
-    nz, binsz, patchesz = plt.hist(z, 70, normed=1, facecolor='cyan', alpha=0.25, label=r'$\Theta_2$')
+    nx, binsx, patchesx = plt.hist(x, 72, normed=1, facecolor='green', alpha=0.95, label='$\Phi$')
+    ny, binsy, patchesy = plt.hist(y, 71, normed=1, facecolor='red', alpha=0.7, label=r'$\Theta_1$')
+    nz, binsz, patchesz = plt.hist(z, 70, normed=1, facecolor='cyan', alpha=0.3, label=r'$\Theta_2$')
 
     (mu_z, sigma_z) = stats.norm.fit(z)
     (mu_y, sigma_y) = stats.norm.fit(y)
@@ -1286,8 +1286,8 @@ def plot_hist(x,y,z, filename, x_lim):
     fity = mlab.normpdf( binsy, mu_y, sigma_y)
     fitz = mlab.normpdf( binsz, mu_z, sigma_z)
     lx = plt.plot(binsx, fitx, 'g-', linewidth=3, alpha=0.95)
-    ly = plt.plot(binsy, fity, 'r-', linewidth=2, alpha=0.85)
-    lz = plt.plot(binsz, fitz, 'c--', linewidth=1.5, alpha=0.65)
+    ly = plt.plot(binsy, fity, 'r-', linewidth=3, alpha=0.85)
+    lz = plt.plot(binsz, fitz, 'c--', linewidth=2, alpha=0.75)
 
     #n, bins, patches = plt.hist(z, 30, normed=1, facecolor='blue', alpha=0.5, label='$\\Theta_2$')
     plt.xlabel(r'$\mathrm{angle}\ ^\circ$')
