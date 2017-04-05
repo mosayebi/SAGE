@@ -1276,7 +1276,7 @@ def plot_hist(x,y,z, filename, x_lim):
     #the histogram of the data
     nx, binsx, patchesx = plt.hist(x, 72, normed=1, facecolor='green', alpha=0.75, label='$\phi$')
     ny, binsy, patchesy = plt.hist(y, 71, normed=1, facecolor='red', alpha=0.6, label=r'$\theta_1$')
-    nz, binsz, patchesz = plt.hist(z, 70, normed=1, facecolor='cyan', alpha=0.3, label=r'$\theta_2$')
+    nz, binsz, patchesz = plt.hist(z, 70, normed=1, facecolor='cyan', alpha=0.25, label=r'$\theta_2$')
 
     (mu_z, sigma_z) = stats.norm.fit(z)
     (mu_y, sigma_y) = stats.norm.fit(y)
@@ -1285,15 +1285,15 @@ def plot_hist(x,y,z, filename, x_lim):
     fitx = mlab.normpdf( binsx, mu_x, sigma_x)
     fity = mlab.normpdf( binsy, mu_y, sigma_y)
     fitz = mlab.normpdf( binsz, mu_z, sigma_z)
-    lx = plt.plot(binsx, fitx, 'g-', linewidth=1, alpha=0.85)
-    ly = plt.plot(binsy, fity, 'r-', linewidth=1, alpha=0.85)
-    lz = plt.plot(binsz, fitz, 'c-', linewidth=1, alpha=0.85)
+    lx = plt.plot(binsx, fitx, 'g-', linewidth=1, alpha=0.95)
+    ly = plt.plot(binsy, fity, 'r-.', linewidth=1, alpha=0.85)
+    lz = plt.plot(binsz, fitz, 'c--', linewidth=1, alpha=0.65)
 
     #n, bins, patches = plt.hist(z, 30, normed=1, facecolor='blue', alpha=0.5, label='$\\theta_2$')
     plt.xlabel(r'$\mathrm{angle}\ ^\circ$')
     plt.ylabel(r'$\mathrm {probability}$')
-    plt.title(r'$\mu_{\phi}=%.2f,\ \sigma_{\phi}=%.2f,\ \ \ \mu_{\theta_1}=%.2f,\ \sigma_{\theta_1}=%.2f,\ \ \ \mu_{\theta_2}=%.2f,\ \sigma_{\theta_2}=%.2f,\ \ \ N=%d$' \
-              %(mu_x, sigma_x, mu_y, sigma_y, mu_z, sigma_z, len(x)),  fontsize=10)
+    plt.title(r'$\mu_{\phi}=%.2f,\ \sigma_{\phi}=%.2f,\ \ \ \mu_{\theta_1}=%.2f,\ \sigma_{\theta_1}=%.2f,\ \ \ \mu_{\theta_2}=%.2f,\ \sigma_{\theta_2}=%.2f$' \
+              %(mu_x, sigma_x, mu_y, sigma_y, mu_z, sigma_z),  fontsize=10)
     plt.legend(loc='upper right')
     if len(x_lim)>0 : plt.xlim(x_lim)
     #plt.grid(True)
