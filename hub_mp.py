@@ -1250,7 +1250,7 @@ def plot_hist(x,y,z, filename, x_lim):
 
     import pylab 
 
-    fig = pylab.figure(0, figsize = (5,3.5))
+    fig = pylab.figure(0, figsize = (5.1,3.5))
     fig_width_pt = 16*246.0  # Get this from LaTeX using \showthe\columnwidth
     inches_per_pt = 1.0/72.27               # Convert pt to inch
     golden_mean = (np.sqrt(5)-1.0)/2.0         # Aesthetic ratio
@@ -1258,11 +1258,11 @@ def plot_hist(x,y,z, filename, x_lim):
     fig_height = fig_width*golden_mean      # height in inches
     fig_size =  [fig_width,fig_height]
     params = {'backend': 'ps',
-              'axes.labelsize': 14,
+              'axes.labelsize': 15,
               #'text.fontsize': 14,
-              'legend.fontsize': 10,
-              'xtick.labelsize': 11,
-              'ytick.labelsize': 11,
+              'legend.fontsize': 12,
+              'xtick.labelsize': 12,
+              'ytick.labelsize': 12,
               #'text.usetex': True,
               'figure.figsize': fig_size,
               'text.latex.preamble': [r"\usepackage{amstext}", r"\usepackage{mathpazo}"]}
