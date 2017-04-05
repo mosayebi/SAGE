@@ -1285,9 +1285,9 @@ def plot_hist(x,y,z, filename, x_lim):
     fitx = mlab.normpdf( binsx, mu_x, sigma_x)
     fity = mlab.normpdf( binsy, mu_y, sigma_y)
     fitz = mlab.normpdf( binsz, mu_z, sigma_z)
-    lx = plt.plot(binsx, fitx, 'g-', linewidth=2, alpha=0.95)
-    ly = plt.plot(binsy, fity, 'r-', linewidth=1.6, alpha=0.85)
-    lz = plt.plot(binsz, fitz, 'c--', linewidth=1.2, alpha=0.65)
+    lx = plt.plot(binsx, fitx, 'g-', linewidth=3, alpha=0.95)
+    ly = plt.plot(binsy, fity, 'r-', linewidth=2, alpha=0.85)
+    lz = plt.plot(binsz, fitz, 'c--', linewidth=1.5, alpha=0.65)
 
     #n, bins, patches = plt.hist(z, 30, normed=1, facecolor='blue', alpha=0.5, label='$\\Theta_2$')
     plt.xlabel(r'$\mathrm{angle}\ ^\circ$')
